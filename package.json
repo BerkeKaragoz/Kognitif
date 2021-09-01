@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "timing-practice",
+  "name": "stopwatch",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {

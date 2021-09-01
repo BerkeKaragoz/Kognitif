@@ -1,6 +1,6 @@
 {
-  "name": "timing-practice",
-  "short_name": "timing-practice",
+  "name": "stopwatch",
+  "short_name": "stopwatch",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",

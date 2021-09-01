@@ -4,7 +4,6 @@ import {
   Heading,
   Center,
   SimpleGrid,
-  StatGroup,
   Stat,
   StatLabel,
   StatNumber,
@@ -13,6 +12,8 @@ import {
   Text,
   Flex,
   Container,
+  CircularProgress,
+  CircularProgressLabel,
 } from "@chakra-ui/react";
 import { getRandomInt } from "../utils";
 import { MouseEventHandler } from "react";
@@ -21,27 +22,29 @@ import useTimer from "../components/useTimer";
 
 const itemTime = 30;
 
+let renderCount = 0;
+
 const secondsToString = (number: number): string =>
   number.toString().padStart(2, "0");
 
-const generateAnswer = (correctAnswer: number, seed: number): number =>
+const generateOption = (correctAnswer: number, seed: number): number =>
   (correctAnswer % 10) + seed * 10;
 
 const getPercentage = (first: number, second: number): number =>
   first + second !== 0 ? (first / (first + second)) * 100 : 0;
 
-type AnswerButtonProps = {
-  answer: number;
+type OptionButtonProps = {
+  option: number;
   handler: (answer: number) => MouseEventHandler<HTMLButtonElement> | undefined;
 };
 
-const AnswerButton: FunctionalComponent<AnswerButtonProps> = (props) => {
-  const { answer, handler } = props;
+const OptionButton: FunctionalComponent<OptionButtonProps> = (props) => {
+  const { option, handler } = props;
 
   return (
     <Button
       colorScheme="purple"
-      onClick={handler(answer)}
+      onClick={handler(option)}
       height="100%"
       width="100%"
     >
@@ -49,92 +52,141 @@ const AnswerButton: FunctionalComponent<AnswerButtonProps> = (props) => {
         <Text fontSize="2xl" opacity={0.4}>
           :
         </Text>
-        <Text fontSize="2xl">{secondsToString(answer)[0]}</Text>
+        <Text fontSize="2xl">{secondsToString(option)[0]}</Text>
         <Text fontSize="2xl" opacity={0.4}>
-          {secondsToString(answer)[1]}
+          {secondsToString(option)[1]}
         </Text>
       </Flex>
     </Button>
   );
 };
 
-let ind = 0;
+type Answer = {
+  question: number;
+  givenAnswer: number;
+  isCorrect: boolean;
+  answerTime: number;
+};
 
 const Home: FunctionalComponent = () => {
+  const [answerList, setAnswerList] = useState<Array<Answer>>([]);
   const [correctCount, setCorrectCount] = useState<number>(0);
   const [wrongCount, setWrongCount] = useState<number>(0);
   const [correctAnswerArrow, setCorrectAnswerArrow] = useState<
     "increase" | "decrease"
   >("increase");
-  const { Timer, setTimerState } = useTimer();
+  const [averageTimeArrow, setAverageTimeArrow] = useState<
+    "increase" | "decrease"
+  >("increase");
+  const { Timer, resetTimer } = useTimer();
   const [askedTime, setAskedTime] = useState<number>(getRandomInt(60));
+  const [totalTime, setTotalTime] = useState<number>(0);
+
   const correctAnswer = (askedTime + itemTime) % 60;
   const startTime = new Date();
 
-  const answerHandler = (answer: number) => (): void => {
-    if (answer === correctAnswer) {
+  const answerHandler = (answerValue: number) => (): void => {
+    const answer: Answer = {
+      question: askedTime,
+      givenAnswer: answerValue,
+      isCorrect: answerValue === correctAnswer,
+      answerTime: resetTimer(),
+    };
+
+    if (answer.isCorrect) {
       setCorrectCount((s) => s + 1);
       setCorrectAnswerArrow("increase");
     } else {
       setWrongCount((s) => s + 1);
       setCorrectAnswerArrow("decrease");
     }
+
+    setTotalTime((s) => s + answer.answerTime);
+
+    setAverageTimeArrow(
+      totalTime / (correctCount + wrongCount) > answer.answerTime
+        ? "increase"
+        : "decrease",
+    );
+
+    setAnswerList((s) => {
+      s.push(answer);
+      return s;
+    });
+
     setAskedTime(getRandomInt(60));
+
+    console.table(answerList);
   };
 
-  console.log(
-    `Start Time: ${startTime.toISOString()} | Render Count: ${ind++}`,
+  console.info(
+    `Start Time: ${startTime.toISOString()} | Render Count: ${renderCount++}`,
   );
 
   return (
     <div>
-      <Timer />
-      <Center mt={6} mb={12}>
-        <Heading size="4xl" onClick={() => setTimerState((s) => !s)}>
-          :{secondsToString(askedTime)}
-        </Heading>
+      <Center mt={6} mb={8}>
+        <CircularProgress
+          max={60}
+          thickness={8}
+          value={askedTime}
+          size={172}
+          color="purple.500"
+          trackColor="gray.700"
+        >
+          <CircularProgressLabel>
+            <Heading size="4xl">:{secondsToString(askedTime)}</Heading>
+          </CircularProgressLabel>
+        </CircularProgress>
       </Center>
       <Container mb={12}>
         <SimpleGrid columns={3} spacing={5} minH="240px">
           {Array.from({ length: 6 }, (_, i) => (
-            <AnswerButton
+            <OptionButton
               key={`answerButton-${i}`}
               handler={answerHandler}
-              answer={generateAnswer(correctAnswer, i)}
+              option={generateOption(correctAnswer, i)}
             />
           ))}
         </SimpleGrid>
       </Container>
-      <Center>
-        <StatGroup>
-          <SimpleGrid columns={1} spacing={10}>
-            <Stat>
-              <StatLabel>Correct</StatLabel>
-              <StatNumber>
-                <Flex align="baseline">
-                  {correctCount}
-                  <Text ml={0.5} fontSize="xs">
-                    / {correctCount + wrongCount}
-                  </Text>
-                </Flex>
-              </StatNumber>
-              <StatHelpText>
-                <StatArrow type={correctAnswerArrow} />
-                {getPercentage(correctCount, wrongCount).toFixed(2)}%
-              </StatHelpText>
-            </Stat>
+      <Container>
+        <SimpleGrid columns={2} spacing={10}>
+          <Stat>
+            <StatLabel>Correct</StatLabel>
+            <StatNumber as="code">
+              <Flex align="baseline">
+                {correctCount}
+                <Text ml={1} fontSize="xs">
+                  / {correctCount + wrongCount}
+                </Text>
+              </Flex>
+            </StatNumber>
+            <StatHelpText>
+              <StatArrow type={correctAnswerArrow} me={0.5} />
+              <code>{getPercentage(correctCount, wrongCount).toFixed(1)}%</code>
+            </StatHelpText>
+          </Stat>
 
-            <Stat>
-              <StatLabel>Clicked</StatLabel>
-              <StatNumber>45</StatNumber>
-              <StatHelpText>
-                <StatArrow type="decrease" />
-                9.05%
-              </StatHelpText>
-            </Stat>
-          </SimpleGrid>
-        </StatGroup>
-      </Center>
+          <Stat textAlign="end">
+            <StatLabel>Time</StatLabel>
+            <StatNumber as="code">
+              <Flex align="baseline" justify="end">
+                <Timer />
+                <Text ml={1} fontSize="xs">
+                  ms
+                </Text>
+              </Flex>
+            </StatNumber>
+            <StatHelpText>
+              <code>
+                ~{(totalTime / (correctCount + wrongCount) || 0).toFixed(0)}ms
+              </code>
+              <StatArrow type={averageTimeArrow} me={0} ms={0.5} />
+            </StatHelpText>
+          </Stat>
+        </SimpleGrid>
+      </Container>
     </div>
   );
 };
