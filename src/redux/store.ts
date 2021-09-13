@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { createLogger } from "redux-logger";
 import counterReducer from "./counterSlice";
-import questionsReducer from "./questionsSlice";
+import simpleModeReducer from "./simpleModeSlice";
 
 const logger = createLogger({
   collapsed: true,
@@ -9,7 +9,7 @@ const logger = createLogger({
 
 export const store = configureStore({
   reducer: {
-    questions: questionsReducer,
+    simpleMode: simpleModeReducer,
     counter: counterReducer,
   },
   middleware: (getDefaultMiddleware) =>

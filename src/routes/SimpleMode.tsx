@@ -14,13 +14,18 @@ import {
   Container,
   CircularProgress,
   CircularProgressLabel,
+  Spinner,
 } from "@chakra-ui/react";
-import { getRandomInt } from "../utils";
 import { MouseEventHandler } from "react";
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import useTimer from "../hooks/useTimer";
-
-const itemTime = 30;
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import {
+  addAnswer,
+  generateQuestion,
+  //simpleAnswersSelectors,
+  SimpleAnswer,
+} from "../redux/simpleModeSlice";
 
 let renderCount = 0;
 
@@ -37,6 +42,8 @@ type OptionButtonProps = {
   option: number;
   handler: (answer: number) => MouseEventHandler<HTMLButtonElement> | undefined;
 };
+
+type ArrowStateType = "increase" | "decrease";
 
 const OptionButton: FunctionalComponent<OptionButtonProps> = (props) => {
   const { option, handler } = props;
@@ -61,67 +68,57 @@ const OptionButton: FunctionalComponent<OptionButtonProps> = (props) => {
   );
 };
 
-type Answer = {
-  question: number;
-  givenAnswer: number;
-  isCorrect: boolean;
-  answerTime: number;
-};
+const SimpleMode: FunctionalComponent = () => {
+  const dispatch = useAppDispatch();
+  const {
+    currentQuestion,
+    currentAnswer,
+    totalCorrectAnswers,
+    totalWrongAnswers,
+    totalTime,
+  } = useAppSelector((state) => state.simpleMode);
+  //const answerList = useAppSelector(simpleAnswersSelectors.selectAll);
 
-const Home: FunctionalComponent = () => {
-  const [answerList, setAnswerList] = useState<Array<Answer>>([]);
-  const [correctCount, setCorrectCount] = useState<number>(0);
-  const [wrongCount, setWrongCount] = useState<number>(0);
-  const [correctAnswerArrow, setCorrectAnswerArrow] = useState<
-    "increase" | "decrease"
-  >("increase");
-  const [averageTimeArrow, setAverageTimeArrow] = useState<
-    "increase" | "decrease"
-  >("increase");
   const { Timer, resetTimer } = useTimer();
-  const [askedTime, setAskedTime] = useState<number>(getRandomInt(60));
-  const [totalTime, setTotalTime] = useState<number>(0);
+  const [correctAnswerArrow, setCorrectAnswerArrow] =
+    useState<ArrowStateType>("increase");
+  const [averageTimeArrow, setAverageTimeArrow] =
+    useState<ArrowStateType>("increase");
 
-  const correctAnswer = (askedTime + itemTime) % 60;
   const startTime = new Date();
 
+  useEffect(() => {
+    dispatch(generateQuestion());
+  }, []);
+
   const answerHandler = (answerValue: number) => (): void => {
-    const answer: Answer = {
-      question: askedTime,
+    if (currentQuestion === null) return;
+
+    const answer: SimpleAnswer = {
+      question: currentQuestion,
       givenAnswer: answerValue,
-      isCorrect: answerValue === correctAnswer,
+      isCorrect: answerValue === currentAnswer,
       answerTime: resetTimer(),
     };
 
-    if (answer.isCorrect) {
-      setCorrectCount((s) => s + 1);
-      setCorrectAnswerArrow("increase");
-    } else {
-      setWrongCount((s) => s + 1);
-      setCorrectAnswerArrow("decrease");
-    }
-
-    setTotalTime((s) => s + answer.answerTime);
+    setCorrectAnswerArrow(answer.isCorrect ? "increase" : "decrease");
 
     setAverageTimeArrow(
-      totalTime / (correctCount + wrongCount) > answer.answerTime
+      totalTime / (totalCorrectAnswers + totalWrongAnswers) > answer.answerTime
         ? "increase"
         : "decrease",
     );
 
-    setAnswerList((s) => {
-      s.push(answer);
-      return s;
-    });
+    dispatch(addAnswer(answer));
 
-    setAskedTime(getRandomInt(60));
-
-    console.table(answerList);
+    dispatch(generateQuestion());
   };
 
   console.info(
-    `Start Time: ${startTime.toISOString()} | Render Count: ${renderCount++}`,
+    `Question Start Time: ${startTime.toISOString()} | Render Count: ${renderCount++}`,
   );
+
+  if (currentQuestion === null || currentAnswer === null) return <Spinner />;
 
   return (
     <div>
@@ -129,13 +126,13 @@ const Home: FunctionalComponent = () => {
         <CircularProgress
           max={60}
           thickness={8}
-          value={askedTime}
+          value={currentQuestion}
           size={172}
           color="purple.500"
           trackColor="gray.700"
         >
           <CircularProgressLabel>
-            <Heading size="4xl">:{secondsToString(askedTime)}</Heading>
+            <Heading size="4xl">:{secondsToString(currentQuestion)}</Heading>
           </CircularProgressLabel>
         </CircularProgress>
       </Center>
@@ -145,7 +142,7 @@ const Home: FunctionalComponent = () => {
             <OptionButton
               key={`answerButton-${i}`}
               handler={answerHandler}
-              option={generateOption(correctAnswer, i)}
+              option={generateOption(currentAnswer, i)}
             />
           ))}
         </SimpleGrid>
@@ -156,15 +153,20 @@ const Home: FunctionalComponent = () => {
             <StatLabel>Correct</StatLabel>
             <StatNumber as="code">
               <Flex align="baseline">
-                {correctCount}
+                {totalCorrectAnswers}
                 <Text ml={1} fontSize="xs">
-                  / {correctCount + wrongCount}
+                  / {totalCorrectAnswers + totalWrongAnswers}
                 </Text>
               </Flex>
             </StatNumber>
             <StatHelpText>
               <StatArrow type={correctAnswerArrow} me={0.5} />
-              <code>{getPercentage(correctCount, wrongCount).toFixed(1)}%</code>
+              <code>
+                {getPercentage(totalCorrectAnswers, totalWrongAnswers).toFixed(
+                  1,
+                )}
+                %
+              </code>
             </StatHelpText>
           </Stat>
 
@@ -180,7 +182,11 @@ const Home: FunctionalComponent = () => {
             </StatNumber>
             <StatHelpText>
               <code>
-                ~{(totalTime / (correctCount + wrongCount) || 0).toFixed(0)}ms
+                ~
+                {(
+                  totalTime / (totalCorrectAnswers + totalWrongAnswers) || 0
+                ).toFixed(0)}
+                ms
               </code>
               <StatArrow type={averageTimeArrow} me={0} ms={0.5} />
             </StatHelpText>
@@ -191,7 +197,7 @@ const Home: FunctionalComponent = () => {
   );
 };
 
-export default Home;
+export default SimpleMode;
 
 /*
 type AnswerButtonProps = ComponentWithAs<

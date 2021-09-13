@@ -1,11 +1,11 @@
 import { FunctionalComponent, h } from "preact";
-import { decrement, increment } from "../redux/questionsSlice";
+import { decrement, increment } from "../redux/counterSlice";
 
 import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { Button, Text } from "@chakra-ui/react";
 
 const Counter: FunctionalComponent<{}> = () => {
-  const count = useAppSelector((state) => state.questions.value);
+  const count = useAppSelector((state) => state.counter.value);
   const dispatch = useAppDispatch();
 
   return (
