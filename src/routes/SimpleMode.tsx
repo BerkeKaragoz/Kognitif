@@ -26,10 +26,7 @@ import {
   //simpleAnswersSelectors,
   SimpleAnswer,
 } from "../redux/simpleModeSlice";
-import KeyboardContext, {
-  registerKListener,
-  unregisterKListener,
-} from "../contexts/Keyboard";
+import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
 
 let renderCount = 0;
 
@@ -129,15 +126,19 @@ const SimpleMode: FunctionalComponent = () => {
 
   useEffect(() => {
     dispatch(generateQuestion());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
-    const callbackIndex = registerKListener(keyboardCallbacks, keyboardHandler);
+    const unregisterHandler = registerKListener(
+      keyboardCallbacks,
+      keyboardHandler,
+    );
 
     return (): void => {
-      unregisterKListener(keyboardCallbacks, callbackIndex);
+      unregisterHandler();
     };
-  }, [currentAnswer]);
+  }, [currentAnswer]); //FIXME should register only at the initial state
+  // ATM cannot because I cannot reach the most recent value of the global variable
 
   if (currentQuestion === null || currentAnswer === null) return <Spinner />;
 

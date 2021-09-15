@@ -17,18 +17,24 @@ export type KeyboardProviderType = {
   type?: "keyup" | "keydown" | "keypress";
 };
 
-export const registerKListener = (
+type KeyboardRegisterer = (
   callbackList: KeyboardCallbackList,
-  handler: KeyboardEventListener,
-): number => {
-  return callbackList.push(handler) - 1;
-};
+  listener: KeyboardEventListener,
+) => KeyboardUnregisterer;
 
-export const unregisterKListener = (
-  callbackList: KeyboardCallbackList,
-  callbackIndex: number,
-): void => {
-  callbackList.splice(callbackIndex, 1);
+type KeyboardUnregisterer = () => KeyboardCallbackList;
+
+export const registerKListener: KeyboardRegisterer = (
+  callbackList,
+  listener,
+) => {
+  callbackList.push(listener);
+
+  return (): KeyboardCallbackList => {
+    const callbackIndex = callbackList.indexOf(listener); // Have to use indexof otherwise the previous ejected functions might change the indexes
+    if (callbackIndex >= 0) return callbackList.splice(callbackIndex, 1);
+    return callbackList;
+  };
 };
 
 export const KeyboardProvider: FunctionalComponent<KeyboardProviderType> = (
