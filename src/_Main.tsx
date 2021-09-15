@@ -13,23 +13,26 @@ import theme from "./style/theme";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
 import Redirect from "./components/header/Redirect";
+import { KeyboardProvider } from "./contexts/Keyboard";
 
 const Main: FunctionalComponent = () => {
   return (
     <Provider store={store}>
-      <div id="preact_root">
-        <ChakraProvider theme={theme}>
-          <Header />
-          <Router>
-            <Redirect path="/" to="/simple" />
-            <Route path="/simple" component={SimpleMode} />
-            <Route path="/counter" component={Counter} />
-            <Route path="/profile/" component={Profile} user="me" />
-            <Route path="/profile/:user" component={Profile} />
-            <NotFoundPage default />
-          </Router>
-        </ChakraProvider>
-      </div>
+      <KeyboardProvider>
+        <div id="preact_root">
+          <ChakraProvider theme={theme}>
+            <Header />
+            <Router>
+              <Redirect path="/" to="/simple" />
+              <Route path="/simple" component={SimpleMode} />
+              <Route path="/counter" component={Counter} />
+              <Route path="/profile/" component={Profile} user="me" />
+              <Route path="/profile/:user" component={Profile} />
+              <NotFoundPage default />
+            </Router>
+          </ChakraProvider>
+        </div>
+      </KeyboardProvider>
     </Provider>
   );
 };

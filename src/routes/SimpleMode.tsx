@@ -17,7 +17,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { MouseEventHandler } from "react";
-import { useEffect, useState } from "preact/hooks";
+import { useCallback, useContext, useEffect, useState } from "preact/hooks";
 import useTimer from "../hooks/useTimer";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
@@ -26,6 +26,10 @@ import {
   //simpleAnswersSelectors,
   SimpleAnswer,
 } from "../redux/simpleModeSlice";
+import KeyboardContext, {
+  registerKListener,
+  unregisterKListener,
+} from "../contexts/Keyboard";
 
 let renderCount = 0;
 
@@ -78,6 +82,7 @@ const SimpleMode: FunctionalComponent = () => {
     totalTime,
   } = useAppSelector((state) => state.simpleMode);
   //const answerList = useAppSelector(simpleAnswersSelectors.selectAll);
+  const keyboardCallbacks = useContext(KeyboardContext);
 
   const { Timer, resetTimer } = useTimer();
   const [correctAnswerArrow, setCorrectAnswerArrow] =
@@ -85,15 +90,9 @@ const SimpleMode: FunctionalComponent = () => {
   const [averageTimeArrow, setAverageTimeArrow] =
     useState<ArrowStateType>("increase");
 
-  const startTime = new Date();
-
-  useEffect(() => {
-    dispatch(generateQuestion());
-  }, []);
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const answerHandler = (answerValue: number) => (): void => {
     if (currentQuestion === null) return;
-
     const answer: SimpleAnswer = {
       question: currentQuestion,
       givenAnswer: answerValue,
@@ -115,8 +114,30 @@ const SimpleMode: FunctionalComponent = () => {
   };
 
   console.info(
-    `Question Start Time: ${startTime.toISOString()} | Render Count: ${renderCount++}`,
+    `Render Time: ${new Date().toISOString()} | Render Count: ${renderCount++}`,
   );
+
+  const keyboardHandler = useCallback(
+    (e: KeyboardEvent): void => {
+      if (["0", "1", "2", "3", "4", "5"].includes(e.key)) {
+        if (currentAnswer)
+          answerHandler(generateOption(currentAnswer, parseInt(e.key, 10)))();
+      }
+    },
+    [answerHandler, currentAnswer],
+  );
+
+  useEffect(() => {
+    dispatch(generateQuestion());
+  }, []);
+
+  useEffect(() => {
+    const callbackIndex = registerKListener(keyboardCallbacks, keyboardHandler);
+
+    return (): void => {
+      unregisterKListener(keyboardCallbacks, callbackIndex);
+    };
+  }, [currentAnswer]);
 
   if (currentQuestion === null || currentAnswer === null) return <Spinner />;
 

@@ -52,6 +52,9 @@ const useTimer = (interval = 32): TimerHook => {
     } else {
       currentTimeRef.current = new Date();
     }
+    return (): void => {
+      setIsActive(false);
+    };
   }, [isActive]);
 
   useInterval(
