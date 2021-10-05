@@ -1,18 +1,17 @@
 import { FunctionalComponent, h } from "preact";
 import { Route, Router } from "preact-router";
 
-import SimpleMode from "./routes/SimpleMode";
-import Profile from "./routes/profile";
-import NotFoundPage from "./routes/notfound";
-import Counter from "./routes/Counter";
-import Header from "./components/header";
+import SimpleMode from "./pages/SimpleMode";
+import NotFoundPage from "./pages/notfound";
+import Counter from "./pages/Counter";
+import Header from "./components/Header";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import theme from "./style/theme";
 
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
-import Redirect from "./components/header/Redirect";
+import Redirect from "./components/Redirect";
 import { KeyboardProvider } from "./contexts/Keyboard";
 
 const Main: FunctionalComponent = () => {
@@ -26,8 +25,6 @@ const Main: FunctionalComponent = () => {
               <Redirect path="/" to="/simple" />
               <Route path="/simple" component={SimpleMode} />
               <Route path="/counter" component={Counter} />
-              <Route path="/profile/" component={Profile} user="me" />
-              <Route path="/profile/:user" component={Profile} />
               <NotFoundPage default />
             </Router>
           </ChakraProvider>

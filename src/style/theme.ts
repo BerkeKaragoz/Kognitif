@@ -37,10 +37,26 @@ const styles: Styles = {
   }),
 };
 
+export const colors = {
+  primary: {
+    50: "#f2eaff",
+    100: "#d4c4f1",
+    200: "#b69ee2",
+    300: "#9977d5",
+    400: "#7c51c8",
+    500: "#6237ae",
+    600: "#4c2b89",
+    700: "#361e63",
+    800: "#21113d",
+    900: "#0d041a",
+  },
+};
+
 const theme: Dict = {
   components,
   config,
   direction,
+  colors,
   styles,
 };
 

@@ -27,17 +27,12 @@ import {
   SimpleAnswer,
 } from "../redux/simpleModeSlice";
 import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
+import { secondsToString, getPercentage } from "../utils";
 
 let renderCount = 0;
 
-const secondsToString = (number: number): string =>
-  number.toString().padStart(2, "0");
-
 const generateOption = (correctAnswer: number, seed: number): number =>
   (correctAnswer % 10) + seed * 10;
-
-const getPercentage = (first: number, second: number): number =>
-  first + second !== 0 ? (first / (first + second)) * 100 : 0;
 
 type OptionButtonProps = {
   option: number;
@@ -72,6 +67,7 @@ const OptionButton: FunctionalComponent<OptionButtonProps> = (props) => {
 const SimpleMode: FunctionalComponent = () => {
   const dispatch = useAppDispatch();
   const {
+    itemTime,
     currentQuestion,
     currentAnswer,
     totalCorrectAnswers,
@@ -155,6 +151,9 @@ const SimpleMode: FunctionalComponent = () => {
         >
           <CircularProgressLabel>
             <Heading size="4xl">:{secondsToString(currentQuestion)}</Heading>
+            <Text fontSize="sm" style={{ opacity: 0.8 }}>
+              +{secondsToString(itemTime)}
+            </Text>
           </CircularProgressLabel>
         </CircularProgress>
       </Center>
