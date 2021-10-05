@@ -46,6 +46,7 @@ const OptionButton: FunctionalComponent<OptionButtonProps> = (props) => {
 
   return (
     <Button
+      id={`answer-button-${secondsToString(option)[0]}`}
       colorScheme="purple"
       onClick={handler(option)}
       height="100%"
@@ -150,9 +151,11 @@ const SimpleMode: FunctionalComponent = () => {
           trackColor="gray.700"
         >
           <CircularProgressLabel>
-            <Heading size="4xl">:{secondsToString(currentQuestion)}</Heading>
+            <Heading size="4xl">
+              :<span id="question">{secondsToString(currentQuestion)}</span>
+            </Heading>
             <Text fontSize="sm" style={{ opacity: 0.8 }}>
-              +{secondsToString(itemTime)}
+              +<span id="item-time">{secondsToString(itemTime)}</span>
             </Text>
           </CircularProgressLabel>
         </CircularProgress>
@@ -174,9 +177,12 @@ const SimpleMode: FunctionalComponent = () => {
             <StatLabel>Correct</StatLabel>
             <StatNumber as="code">
               <Flex align="baseline">
-                {totalCorrectAnswers}
+                <span id="correct-answers">{totalCorrectAnswers}</span>
                 <Text ml={1} fontSize="xs">
-                  / {totalCorrectAnswers + totalWrongAnswers}
+                  /{" "}
+                  <span id="total-answers">
+                    {totalCorrectAnswers + totalWrongAnswers}
+                  </span>
                 </Text>
               </Flex>
             </StatNumber>
