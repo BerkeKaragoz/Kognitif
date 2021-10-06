@@ -15,6 +15,17 @@ import {
   CircularProgress,
   CircularProgressLabel,
   Spinner,
+  List,
+  ListIcon,
+  ListItem,
+  Table,
+  TableCaption,
+  Tbody,
+  Td,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 import { MouseEventHandler } from "react";
 import { useCallback, useContext, useEffect, useState } from "preact/hooks";
@@ -23,11 +34,13 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   addAnswer,
   generateQuestion,
-  //simpleAnswersSelectors,
+  simpleAnswersSelectors,
   SimpleAnswer,
 } from "../redux/simpleModeSlice";
 import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
 import { secondsToString, getPercentage } from "../utils";
+import { CheckCircleIcon } from "@chakra-ui/icons";
+import CircleIcon from "../components/CircleIcon";
 
 let renderCount = 0;
 
@@ -75,6 +88,7 @@ const SimpleMode: FunctionalComponent = () => {
     totalWrongAnswers,
     totalTime,
   } = useAppSelector((state) => state.simpleMode);
+  const answerList = useAppSelector(simpleAnswersSelectors.selectAll);
   //const answerList = useAppSelector(simpleAnswersSelectors.selectAll);
   const keyboardCallbacks = useContext(KeyboardContext);
 
@@ -171,7 +185,7 @@ const SimpleMode: FunctionalComponent = () => {
           ))}
         </SimpleGrid>
       </Container>
-      <Container>
+      <Container mb={8}>
         <SimpleGrid columns={2} spacing={10}>
           <Stat>
             <StatLabel>Correct</StatLabel>
@@ -219,6 +233,50 @@ const SimpleMode: FunctionalComponent = () => {
             </StatHelpText>
           </Stat>
         </SimpleGrid>
+      </Container>
+
+      <Container pb={8}>
+        <Table variant="simple" size="md">
+          <TableCaption>Session Statistics</TableCaption>
+          <Thead>
+            <Tr>
+              <Th>#</Th>
+              <Th>✓</Th>
+              <Th>Q</Th>
+              <Th isNumeric>A</Th>
+              <Th isNumeric>ms</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {
+              //TODO make as a component & virtualize & minimize
+              answerList.reverse().map((a) => (
+                <Tr>
+                  <Td>
+                    <i>{a.id + 1}</i>
+                  </Td>
+                  <Td>
+                    {a.isCorrect ? (
+                      <CheckCircleIcon color="green.500" />
+                    ) : (
+                      <CircleIcon color="red.500" />
+                    )}
+                  </Td>
+                  <Td>
+                    {secondsToString(a.question)}
+                    <span style={{ opacity: 0.25 }}>?</span>
+                  </Td>
+                  <Td isNumeric>
+                    <b>{secondsToString(a.givenAnswer)}</b>
+                  </Td>
+                  <Td isNumeric>
+                    <code>{a.answerTime}</code>
+                  </Td>
+                </Tr>
+              ))
+            }
+          </Tbody>
+        </Table>
       </Container>
     </div>
   );
