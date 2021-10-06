@@ -1,4 +1,6 @@
-# stopwatch
+# Stopwatch
+
+![image](https://user-images.githubusercontent.com/34271483/136263783-25c266d0-31f4-41cb-9ee5-2dcf73b98c33.png)
 
 ## CLI Commands
 
@@ -6,14 +8,8 @@
 
 - `npm run dev`: Run a development, HMR server
 
-- `npm run serve`: Run a production-like server
-
-- `npm run build`: Production-ready build
-
-- `npm run lint`: Pass TypeScript files using ESLint
+- `npm run e2e`: Run Cypress
 
 - `npm run test`: Run Jest and Enzyme with
   [`enzyme-adapter-preact-pure`](https://github.com/preactjs/enzyme-adapter-preact-pure) for
   your tests
-
-For detailed explanation on how things work, checkout the [CLI Readme](https://github.com/developit/preact-cli/blob/master/README.md).
