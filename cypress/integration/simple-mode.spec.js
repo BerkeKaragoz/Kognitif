@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 
 describe("Simple Mode Test", () => {
-  beforeEach(() => {
-    cy.visit("/");
+  before(() => {
+    cy.visit("/simple");
   });
 
   it("Has a title", () => {
@@ -47,7 +47,9 @@ describe("Simple Mode Test", () => {
         cy.get("#correct-answers").should("have.text", "0");
         cy.get("#total-answers").should("have.text", "0");
 
-        cy.get("#answer-button-" + wrongAnswer.toString()[0]).click();
+        cy.get(
+          "#answer-button-" + wrongAnswer.toString().padStart(2, "0")[0],
+        ).click();
 
         cy.get("#correct-answers").should("have.text", "0");
         cy.get("#total-answers").should("have.text", "1");
@@ -65,12 +67,14 @@ describe("Simple Mode Test", () => {
         const correctAnswer = (question + itemTime) % 60;
 
         cy.get("#correct-answers").should("have.text", "0");
-        cy.get("#total-answers").should("have.text", "0");
+        cy.get("#total-answers").should("have.text", "1");
 
-        cy.get("#answer-button-" + correctAnswer.toString()[0]).click();
+        cy.get(
+          "#answer-button-" + correctAnswer.toString().padStart(2, "0")[0],
+        ).click();
 
         cy.get("#correct-answers").should("have.text", "1");
-        cy.get("#total-answers").should("have.text", "1");
+        cy.get("#total-answers").should("have.text", "2");
       });
     });
   });
