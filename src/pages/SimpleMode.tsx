@@ -1,46 +1,42 @@
-import { FunctionalComponent, h } from "preact";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
   Button,
-  Heading,
   Center,
-  SimpleGrid,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-  Text,
-  Flex,
-  Container,
   CircularProgress,
   CircularProgressLabel,
+  Container,
+  Flex,
+  Heading,
+  SimpleGrid,
   Spinner,
-  List,
-  ListIcon,
-  ListItem,
+  Stat,
+  StatArrow,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
   Table,
   TableCaption,
   Tbody,
   Td,
-  Tfoot,
+  Text,
   Th,
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { MouseEventHandler } from "react";
+import { FunctionalComponent, h } from "preact";
 import { useCallback, useContext, useEffect, useState } from "preact/hooks";
+import { MouseEventHandler } from "react";
+import CircleIcon from "../components/CircleIcon";
+import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
 import useTimer from "../hooks/useTimer";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   addAnswer,
   generateQuestion,
-  simpleAnswersSelectors,
   SimpleAnswer,
+  simpleAnswersSelectors,
 } from "../redux/simpleModeSlice";
-import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
-import { secondsToString, getPercentage } from "../utils";
-import { CheckCircleIcon } from "@chakra-ui/icons";
-import CircleIcon from "../components/CircleIcon";
+import { getPercentage, secondsToString } from "../utils";
 
 let renderCount = 0;
 
