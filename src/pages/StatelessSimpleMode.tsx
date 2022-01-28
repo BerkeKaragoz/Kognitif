@@ -15,7 +15,7 @@ import {
   CircularProgress,
   CircularProgressLabel,
 } from "@chakra-ui/react";
-import { getRandomInt } from "../utils";
+import { getRandomInt } from "../lib";
 import { MouseEventHandler } from "react";
 import { useState } from "preact/hooks";
 import useTimer from "../hooks/useTimer";

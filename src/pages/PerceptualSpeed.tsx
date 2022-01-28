@@ -1,14 +1,19 @@
-import { CheckCircleIcon } from "@chakra-ui/icons";
+import { FunctionalComponent, h } from "preact";
+import { decrement, increment } from "../redux/counterSlice";
+import { MouseEventHandler } from "react";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import {
+  Box,
   Button,
   Center,
   CircularProgress,
   CircularProgressLabel,
   Container,
   Flex,
+  Grid,
+  GridItem,
   Heading,
   SimpleGrid,
-  Spinner,
   Stat,
   StatArrow,
   StatHelpText,
@@ -22,107 +27,69 @@ import {
   Th,
   Thead,
   Tr,
+  useInterval,
 } from "@chakra-ui/react";
-import { FunctionalComponent, h } from "preact";
-import { useCallback, useContext, useEffect, useState } from "preact/hooks";
-import { MouseEventHandler } from "react";
-import CircleIcon from "../components/CircleIcon";
-import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
-import useTimer from "../hooks/useTimer";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   addAnswer,
   generateQuestion,
-  SimpleAnswer,
-  simpleAnswersSelectors,
-} from "../redux/simpleModeSlice";
+  perceptualSpeedSelectors,
+} from "../redux/perceptualSpeedSlice";
+import { useCallback, useContext, useEffect, useState } from "preact/hooks";
+import { PSAnswerData, PSAnswerInput } from "../lib/perceptualSpeed";
+import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
 import { ArrowStateType, getPercentage, secondsToString } from "../lib";
+import useTimer from "../hooks/useTimer";
+import { CheckCircleIcon } from "@chakra-ui/icons";
+import CircleIcon from "../components/CircleIcon";
 
-let renderCount = 0;
-
-const generateOption = (correctAnswer: number, seed: number): number =>
-  (correctAnswer % 10) + seed * 10;
-
-type OptionButtonProps = {
-  option: number;
-  handler: (answer: number) => MouseEventHandler<HTMLButtonElement> | undefined;
-};
-
-const OptionButton: FunctionalComponent<OptionButtonProps> = (props) => {
-  const { option, handler } = props;
-
-  return (
-    <Button
-      id={`answer-button-${secondsToString(option)[0]}`}
-      colorScheme="purple"
-      onClick={handler(option)}
-      height="100%"
-      width="100%"
-    >
-      <Flex align="baseline">
-        <Text fontSize="2xl" opacity={0.4}>
-          :
-        </Text>
-        <Text fontSize="2xl">{secondsToString(option)[0]}</Text>
-        <Text fontSize="2xl" opacity={0.4}>
-          {secondsToString(option)[1]}
-        </Text>
-      </Flex>
-    </Button>
-  );
-};
-
-const SimpleMode: FunctionalComponent = () => {
-  const dispatch = useAppDispatch();
+const PerceptualSpeed: FunctionalComponent<{}> = () => {
   const {
-    itemTime,
     currentQuestion,
     currentAnswer,
+    questionTime,
     totalCorrectAnswers,
     totalWrongAnswers,
     totalTime,
-  } = useAppSelector((state) => state.simpleMode);
-  const answerList = useAppSelector(simpleAnswersSelectors.selectAll);
+  } = useAppSelector((state) => state.perceptualSpeed);
   const keyboardCallbacks = useContext(KeyboardContext);
-
-  const { Timer, resetTimer } = useTimer();
+  const dispatch = useAppDispatch();
+  const { Timer, resetTimer, getElapsedTime } = useTimer();
+  const answerList = useAppSelector(perceptualSpeedSelectors.selectAll);
   const [correctAnswerArrow, setCorrectAnswerArrow] =
     useState<ArrowStateType>("increase");
   const [averageTimeArrow, setAverageTimeArrow] =
     useState<ArrowStateType>("increase");
+  const [elapsedTime, setElapsedTime] = useState(0);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const answerHandler = (answerValue: number) => (): void => {
-    if (currentQuestion === null) return;
-    const answer: SimpleAnswer = {
-      question: currentQuestion,
-      givenAnswer: answerValue,
-      isCorrect: answerValue === currentAnswer,
+  useInterval(() => {
+    setElapsedTime(getElapsedTime);
+  }, 1000);
+
+  const answerHandler = (answer: PSAnswerInput) => {
+    const data: PSAnswerData = {
+      question: currentQuestion!,
+      givenAnswer: answer,
+      correctAnswer: currentAnswer!,
+      isCorrect: currentAnswer === answer,
       answerTime: resetTimer(),
     };
 
-    setCorrectAnswerArrow(answer.isCorrect ? "increase" : "decrease");
+    setCorrectAnswerArrow(data.isCorrect ? "increase" : "decrease");
 
     setAverageTimeArrow(
-      totalTime / (totalCorrectAnswers + totalWrongAnswers) > answer.answerTime
+      totalTime / (totalCorrectAnswers + totalWrongAnswers) > data.answerTime
         ? "increase"
         : "decrease",
     );
 
-    dispatch(addAnswer(answer));
-
+    dispatch(addAnswer(data));
     dispatch(generateQuestion());
   };
 
-  console.info(
-    `Render Time: ${new Date().toISOString()} | Render Count: ${renderCount++}`,
-  );
-
   const keyboardHandler = useCallback(
-    (e: KeyboardEvent): void => {
+    (e: KeyboardEvent) => {
       if (["0", "1", "2", "3", "4", "5"].includes(e.key)) {
-        if (currentAnswer)
-          answerHandler(generateOption(currentAnswer, parseInt(e.key, 10)))();
+        if (currentAnswer) answerHandler(parseInt(e.key));
       }
     },
     [answerHandler, currentAnswer],
@@ -130,7 +97,7 @@ const SimpleMode: FunctionalComponent = () => {
 
   useEffect(() => {
     dispatch(generateQuestion());
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     const unregisterHandler = registerKListener(
@@ -144,37 +111,68 @@ const SimpleMode: FunctionalComponent = () => {
   }, [currentAnswer]); //FIXME should register only at the initial state
   // ATM cannot because I cannot reach the most recent value of the global variable
 
-  if (currentQuestion === null || currentAnswer === null) return <Spinner />;
-
   return (
     <div>
       <Center mt={6} mb={8}>
         <CircularProgress
-          max={60}
+          max={questionTime * 1000}
           thickness={8}
-          value={currentQuestion}
+          value={elapsedTime}
           size={172}
           color="purple.500"
           trackColor="gray.700"
         >
           <CircularProgressLabel>
             <Heading size="4xl">
-              :<span id="question">{secondsToString(currentQuestion)}</span>
+              :
+              <span id="question">
+                {secondsToString(
+                  Math.max(0, Math.round(questionTime - elapsedTime / 1000)),
+                )}
+              </span>
             </Heading>
             <Text fontSize="sm" style={{ opacity: 0.8 }}>
-              +<span id="item-time">{secondsToString(itemTime)}</span>
+              <span id="item-time">{secondsToString(questionTime)}</span>
             </Text>
           </CircularProgressLabel>
         </CircularProgress>
       </Center>
-      <Container mb={12}>
-        <SimpleGrid columns={3} spacing={5} minH="240px">
-          {Array.from({ length: 6 }, (_, i) => (
-            <OptionButton
+      <Container mt={6} mb={8}>
+        <Grid
+          templateColumns="repeat(4, 1fr)"
+          borderRadius="lg"
+          p={1}
+          border="1px"
+          borderColor="gray.600"
+          textAlign="center"
+          mb={4}
+        >
+          {currentQuestion !== null &&
+            Object.entries(currentQuestion).map((v) => (
+              <GridItem>
+                <Box p={4} border="1px" borderColor="gray.700">
+                  <Text fontSize="4xl">{v[0]}</Text>
+                </Box>
+                <Box p={4} border="1px" borderColor="gray.700">
+                  <Text fontSize="4xl">{v[1]}</Text>
+                </Box>
+              </GridItem>
+            ))}
+        </Grid>
+        <SimpleGrid columns={5} spacing={5} minH="100px">
+          {Array.from({ length: 5 }, (_, i) => (
+            <Button
               key={`answerButton-${i}`}
-              handler={answerHandler}
-              option={generateOption(currentAnswer, i)}
-            />
+              id={`answer-button-${i}`}
+              colorScheme="purple"
+              height="100%"
+              width="100%"
+              onClick={() => answerHandler(i)}
+            >
+              <Flex align="baseline">
+                <Text fontSize="2xl">{i}</Text>
+              </Flex>
+            </Button>
           ))}
         </SimpleGrid>
       </Container>
@@ -227,7 +225,6 @@ const SimpleMode: FunctionalComponent = () => {
           </Stat>
         </SimpleGrid>
       </Container>
-
       <Container pb={8}>
         <Table variant="simple" size="md">
           <TableCaption>Session Statistics</TableCaption>
@@ -235,7 +232,6 @@ const SimpleMode: FunctionalComponent = () => {
             <Tr>
               <Th>#</Th>
               <Th>✓</Th>
-              <Th>Q</Th>
               <Th isNumeric>A</Th>
               <Th isNumeric>ms</Th>
             </Tr>
@@ -255,12 +251,8 @@ const SimpleMode: FunctionalComponent = () => {
                       <CircleIcon color="red.500" />
                     )}
                   </Td>
-                  <Td>
-                    {secondsToString(a.question)}
-                    <span style={{ opacity: 0.25 }}>?</span>
-                  </Td>
                   <Td isNumeric>
-                    <b>{secondsToString(a.givenAnswer)}</b>
+                    <b>{a.givenAnswer}</b>
                   </Td>
                   <Td isNumeric>
                     <code>{a.answerTime}</code>
@@ -275,34 +267,4 @@ const SimpleMode: FunctionalComponent = () => {
   );
 };
 
-export default SimpleMode;
-
-/*
-type AnswerButtonProps = ComponentWithAs<
-  "button",
-  ButtonProps & {
-    correct: number;
-    answer: number;
-  }
->;
-
-const AnswerButton = forwardRef<HTMLButtonElement, AnswerButtonProps>(
-  (props, ref) => {
-    const { children, onClick, correct, answer } = props;
-
-    const answerHandler = (answer: number) => (): void => {
-      if (answer === correct) {
-        console.log("Correct!");
-      } else {
-        console.log("False!");
-      }
-    };
-
-    return (
-      <Button ref={ref} colorScheme="purple" onClick={answerHandler(answer)}>
-        {children}
-      </Button>
-    );
-  },
-);
-*/
+export default PerceptualSpeed;

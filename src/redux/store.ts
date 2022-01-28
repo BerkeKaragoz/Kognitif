@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { createLogger } from "redux-logger";
 import counterReducer from "./counterSlice";
+import perceptualSpeedReducer from "./perceptualSpeedSlice";
 import simpleModeReducer from "./simpleModeSlice";
 
 const logger = createLogger({
@@ -9,8 +10,9 @@ const logger = createLogger({
 
 export const store = configureStore({
   reducer: {
-    simpleMode: simpleModeReducer,
     counter: counterReducer,
+    simpleMode: simpleModeReducer,
+    perceptualSpeed: perceptualSpeedReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: false }).concat(logger),

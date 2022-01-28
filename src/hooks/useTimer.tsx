@@ -2,12 +2,12 @@ import { useInterval } from "@chakra-ui/react";
 import { FunctionalComponent, h } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 
-//let ind = 0;
+//let ind = 0; //for debugging
 
 type TimerHook = {
   Timer: FunctionalComponent;
   resetTimer: (pause?: boolean) => number;
-  setTimerState: (state: boolean) => void;
+  setTimerIsActive: (state: boolean) => void;
   getElapsedTime: () => number;
 };
 
@@ -18,7 +18,7 @@ const useTimer = (interval = 32): TimerHook => {
   const startTimeRef = useRef<Date>(new Date()); // Better to start timer on useEffect for the user
   const currentTimeRef = useRef<Date>(new Date()); // Better to start timer on useEffect for the user
 
-  const setTimerState = (
+  const setTimerIsActive = (
     active: boolean | ((prevState: boolean) => boolean),
   ): void => {
     setIsActive(active);
@@ -37,7 +37,7 @@ const useTimer = (interval = 32): TimerHook => {
 
   const resetTimer = (pause = false): number => {
     const elapsedTime = getElapsedTime();
-    if (pause) setTimerState(false);
+    if (pause) setTimerIsActive(false);
     startTimeRef.current = new Date();
     return elapsedTime;
   };
@@ -52,7 +52,7 @@ const useTimer = (interval = 32): TimerHook => {
     } else {
       currentTimeRef.current = new Date();
     }
-    return (): void => {
+    return () => {
       setIsActive(false);
     };
   }, [isActive]);
@@ -60,11 +60,8 @@ const useTimer = (interval = 32): TimerHook => {
   useInterval(
     () => {
       currentTimeRef.current = new Date();
-      if (timerRef.current) {
-        timerRef.current.innerHTML = (
-          currentTimeRef.current.getTime() - startTimeRef.current.getTime()
-        ).toString();
-      }
+      if (!timerRef.current) return;
+      timerRef.current.innerHTML = getTimeDiff().toString();
     },
     isActive ? interval : null,
   );
@@ -77,7 +74,7 @@ const useTimer = (interval = 32): TimerHook => {
     <span ref={timerRef}>{getTimeDiff().toString()}</span>
   );
 
-  return { Timer, resetTimer, setTimerState, getElapsedTime };
+  return { Timer, resetTimer, setTimerIsActive, getElapsedTime };
 };
 
 export default useTimer;

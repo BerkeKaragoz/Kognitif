@@ -3,7 +3,7 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { getRandomInt } from "../utils";
+import { getRandomInt } from "../lib";
 import { RootState } from "./store";
 
 type Question = number;
@@ -43,7 +43,7 @@ export const simpleModeSlice = createSlice({
     },
   ),
   reducers: {
-    addAnswer: (state, action: PayloadAction<SimpleAnswer>): void => {
+    addAnswer: (state, action: PayloadAction<SimpleAnswer>) => {
       const entity: SimpleAnswerEntity = {
         ...action.payload,
         id: state.ids.length,
@@ -56,7 +56,7 @@ export const simpleModeSlice = createSlice({
 
       simpleAnswersAdapter.addOne(state, entity);
     },
-    generateQuestion: (state): void => {
+    generateQuestion: (state) => {
       state.currentQuestion = getRandomInt(60) as Question;
       state.currentAnswer = (state.currentQuestion + state.itemTime) % 60;
     },

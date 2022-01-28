@@ -13,6 +13,7 @@ import { store } from "./redux/store";
 import { Provider } from "react-redux";
 import Redirect from "./components/Redirect";
 import { KeyboardProvider } from "./contexts/Keyboard";
+import PerceptualSpeed from "./pages/PerceptualSpeed";
 
 const Main: FunctionalComponent = () => {
   return (
@@ -25,6 +26,7 @@ const Main: FunctionalComponent = () => {
               <Redirect path="/" to="/simple" />
               <Route path="/simple" component={SimpleMode} />
               <Route path="/counter" component={Counter} />
+              <Route path="/perceptual-speed" component={PerceptualSpeed} />
               <NotFoundPage default />
             </Router>
           </ChakraProvider>
