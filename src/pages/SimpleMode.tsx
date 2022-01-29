@@ -243,30 +243,33 @@ const SimpleMode: FunctionalComponent = () => {
           <Tbody>
             {
               //TODO make as a component & virtualize & minimize
-              answerList.reverse().map((a) => (
-                <Tr>
-                  <Td>
-                    <i>{a.id + 1}</i>
-                  </Td>
-                  <Td>
-                    {a.isCorrect ? (
-                      <CheckCircleIcon color="green.500" />
-                    ) : (
-                      <CircleIcon color="red.500" />
-                    )}
-                  </Td>
-                  <Td>
-                    {secondsToString(a.question)}
-                    <span style={{ opacity: 0.25 }}>?</span>
-                  </Td>
-                  <Td isNumeric>
-                    <b>{secondsToString(a.givenAnswer)}</b>
-                  </Td>
-                  <Td isNumeric>
-                    <code>{a.answerTime}</code>
-                  </Td>
-                </Tr>
-              ))
+              answerList
+                .slice()
+                .reverse()
+                .map((a) => (
+                  <Tr>
+                    <Td>
+                      <i>{a.id + 1}</i>
+                    </Td>
+                    <Td>
+                      {a.isCorrect ? (
+                        <CheckCircleIcon color="green.500" />
+                      ) : (
+                        <CircleIcon color="red.500" />
+                      )}
+                    </Td>
+                    <Td>
+                      {secondsToString(a.question)}
+                      <span style={{ opacity: 0.25 }}>?</span>
+                    </Td>
+                    <Td isNumeric>
+                      <b>{secondsToString(a.givenAnswer)}</b>
+                    </Td>
+                    <Td isNumeric>
+                      <code>{a.answerTime}</code>
+                    </Td>
+                  </Tr>
+                ))
             }
           </Tbody>
         </Table>

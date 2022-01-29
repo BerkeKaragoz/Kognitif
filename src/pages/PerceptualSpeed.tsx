@@ -132,7 +132,7 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
               </span>
             </Heading>
             <Text fontSize="sm" style={{ opacity: 0.8 }}>
-              <span id="item-time">{secondsToString(questionTime)}</span>
+              <span id="item-time">Target: {questionTime}s</span>
             </Text>
           </CircularProgressLabel>
         </CircularProgress>
@@ -239,27 +239,29 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
           <Tbody>
             {
               //TODO make as a component & virtualize & minimize
-              //FIXME reverse rerender re-reverses
-              answerList.reverse().map((a) => (
-                <Tr>
-                  <Td>
-                    <i>{a.id + 1}</i>
-                  </Td>
-                  <Td>
-                    {a.isCorrect ? (
-                      <CheckCircleIcon color="green.500" />
-                    ) : (
-                      <CircleIcon color="red.500" />
-                    )}
-                  </Td>
-                  <Td isNumeric>
-                    <b>{a.givenAnswer}</b>
-                  </Td>
-                  <Td isNumeric>
-                    <code>{a.answerTime}</code>
-                  </Td>
-                </Tr>
-              ))
+              answerList
+                .slice()
+                .reverse()
+                .map((a) => (
+                  <Tr>
+                    <Td>
+                      <i>{a.id + 1}</i>
+                    </Td>
+                    <Td>
+                      {a.isCorrect ? (
+                        <CheckCircleIcon color="green.500" />
+                      ) : (
+                        <CircleIcon color="red.500" />
+                      )}
+                    </Td>
+                    <Td isNumeric>
+                      <b>{a.givenAnswer}</b>
+                    </Td>
+                    <Td isNumeric>
+                      <code>{a.answerTime}</code>
+                    </Td>
+                  </Tr>
+                ))
             }
           </Tbody>
         </Table>
