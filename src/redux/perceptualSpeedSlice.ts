@@ -24,7 +24,7 @@ interface PSState extends BaseQuestionState<PSQuestion, PSAnswerInput> {
 export const perceptualSpeedSlice = createSlice({
   name: "perceptualSpeed",
   initialState: perceptualSpeedAdapter.getInitialState<PSState>({
-    questionTime: 7,
+    questionTime: 6,
     totalCorrectAnswers: 0,
     totalWrongAnswers: 0,
     totalTime: 0,

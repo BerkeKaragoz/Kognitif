@@ -1,9 +1,8 @@
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Flex, Heading, Text, Link, Box, LinkBox } from "@chakra-ui/layout";
-import { Menu, MenuButton, Button, MenuList, MenuItem } from "@chakra-ui/react";
-import { FunctionalComponent, Fragment, h } from "preact";
+import { Box, Flex, Heading, Link } from "@chakra-ui/layout";
+import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import { Fragment, FunctionalComponent, h } from "preact";
 import { colors } from "../style/theme";
-import AppLink from "./AppLink";
 
 const Header: FunctionalComponent = () => {
   return (
@@ -29,6 +28,9 @@ const Header: FunctionalComponent = () => {
               </MenuItem>
               <MenuItem as={Link} href="/perceptual-speed">
                 Perceptual Speed
+              </MenuItem>
+              <MenuItem as={Link} href="/number-speed">
+                Number Speed
               </MenuItem>
             </MenuList>
           </Menu>
