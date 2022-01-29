@@ -10,7 +10,6 @@ import {
   PSAnswerData,
   PSAnswerInput,
   PSQuestion,
-  UppercaseLetter,
 } from "../lib/perceptualSpeed";
 import { RootState } from "./store";
 
@@ -19,14 +18,12 @@ type PSAnswerEntity = AnswerEntity<PSAnswerData>;
 const perceptualSpeedAdapter = createEntityAdapter<PSAnswerEntity>();
 
 interface PSState extends BaseQuestionState<PSQuestion, PSAnswerInput> {
-  value: number; //delete
   questionTime: number;
 }
 
 export const perceptualSpeedSlice = createSlice({
   name: "perceptualSpeed",
   initialState: perceptualSpeedAdapter.getInitialState<PSState>({
-    value: 0,
     questionTime: 7,
     totalCorrectAnswers: 0,
     totalWrongAnswers: 0,
@@ -35,19 +32,6 @@ export const perceptualSpeedSlice = createSlice({
     currentAnswer: null,
   }),
   reducers: {
-    increment: (state) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state.value += 1;
-    },
-    decrement: (state) => {
-      state.value -= 1;
-    },
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload;
-    },
     generateQuestion: (state) => {
       state.currentQuestion = {};
       state.currentAnswer = 0;
@@ -92,13 +76,7 @@ export const perceptualSpeedSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {
-  increment,
-  decrement,
-  incrementByAmount,
-  generateQuestion,
-  addAnswer,
-} = perceptualSpeedSlice.actions;
+export const { generateQuestion, addAnswer } = perceptualSpeedSlice.actions;
 
 export const perceptualSpeedSelectors =
   perceptualSpeedAdapter.getSelectors<RootState>(

@@ -179,7 +179,7 @@ const SimpleMode: FunctionalComponent = () => {
         </SimpleGrid>
       </Container>
       <Container mb={8}>
-        <SimpleGrid columns={2} spacing={10}>
+        <SimpleGrid columns={3} spacing={10}>
           <Stat>
             <StatLabel>Correct</StatLabel>
             <StatNumber as="code">
@@ -203,7 +203,17 @@ const SimpleMode: FunctionalComponent = () => {
               </code>
             </StatHelpText>
           </Stat>
-
+          <Text
+            textAlign="center"
+            fontSize="sm"
+            opacity={0.8}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            Add {secondsToString(itemTime)}s to ":
+            {secondsToString(currentQuestion)}"
+          </Text>
           <Stat textAlign="end">
             <StatLabel>Time</StatLabel>
             <StatNumber as="code">

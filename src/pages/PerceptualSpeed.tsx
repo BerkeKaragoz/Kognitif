@@ -1,7 +1,4 @@
-import { FunctionalComponent, h } from "preact";
-import { decrement, increment } from "../redux/counterSlice";
-import { MouseEventHandler } from "react";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -29,18 +26,19 @@ import {
   Tr,
   useInterval,
 } from "@chakra-ui/react";
+import { FunctionalComponent, h } from "preact";
+import { useCallback, useContext, useEffect, useState } from "preact/hooks";
+import CircleIcon from "../components/CircleIcon";
+import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
+import useTimer from "../hooks/useTimer";
+import { ArrowStateType, getPercentage, secondsToString } from "../lib";
+import { PSAnswerData, PSAnswerInput } from "../lib/perceptualSpeed";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   addAnswer,
   generateQuestion,
   perceptualSpeedSelectors,
 } from "../redux/perceptualSpeedSlice";
-import { useCallback, useContext, useEffect, useState } from "preact/hooks";
-import { PSAnswerData, PSAnswerInput } from "../lib/perceptualSpeed";
-import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
-import { ArrowStateType, getPercentage, secondsToString } from "../lib";
-import useTimer from "../hooks/useTimer";
-import { CheckCircleIcon } from "@chakra-ui/icons";
-import CircleIcon from "../components/CircleIcon";
 
 const PerceptualSpeed: FunctionalComponent<{}> = () => {
   const {
@@ -131,7 +129,7 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
                 )}
               </span>
             </Heading>
-            <Text fontSize="sm" style={{ opacity: 0.8 }}>
+            <Text fontSize="sm" opacity={0.8}>
               <span id="item-time">Target: {questionTime}s</span>
             </Text>
           </CircularProgressLabel>
@@ -177,7 +175,7 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
         </SimpleGrid>
       </Container>
       <Container mb={8}>
-        <SimpleGrid columns={2} spacing={10}>
+        <SimpleGrid columns={3} spacing={10}>
           <Stat>
             <StatLabel>Correct</StatLabel>
             <StatNumber as="code">
@@ -201,7 +199,15 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
               </code>
             </StatHelpText>
           </Stat>
-
+          <Text
+            textAlign="center"
+            fontSize="sm"
+            opacity={0.8}
+            display="flex"
+            alignItems="center"
+          >
+            Count Vertical Matches
+          </Text>
           <Stat textAlign="end">
             <StatLabel>Time</StatLabel>
             <StatNumber as="code">
