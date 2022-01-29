@@ -53,8 +53,8 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
   } = useAppSelector((state) => state.perceptualSpeed);
   const keyboardCallbacks = useContext(KeyboardContext);
   const dispatch = useAppDispatch();
-  const { Timer, resetTimer, getElapsedTime } = useTimer();
   const answerList = useAppSelector(perceptualSpeedSelectors.selectAll);
+  const { Timer, resetTimer, getElapsedTime } = useTimer();
   const [correctAnswerArrow, setCorrectAnswerArrow] =
     useState<ArrowStateType>("increase");
   const [averageTimeArrow, setAverageTimeArrow] =
@@ -239,6 +239,7 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
           <Tbody>
             {
               //TODO make as a component & virtualize & minimize
+              //FIXME reverse rerender re-reverses
               answerList.reverse().map((a) => (
                 <Tr>
                   <Td>

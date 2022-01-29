@@ -6,7 +6,7 @@ describe("Simple Mode Test", () => {
   });
 
   it("Has a title", () => {
-    cy.contains("St0pwatch");
+    cy.contains("Kognitif");
   });
 
   it("Has an item time", () => {

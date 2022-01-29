@@ -1,7 +1,9 @@
-import { Flex, Heading, Text, Link, Box } from "@chakra-ui/layout";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Flex, Heading, Text, Link, Box, LinkBox } from "@chakra-ui/layout";
+import { Menu, MenuButton, Button, MenuList, MenuItem } from "@chakra-ui/react";
 import { FunctionalComponent, Fragment, h } from "preact";
-import { Link as PreactLink } from "preact-router/match";
 import { colors } from "../style/theme";
+import AppLink from "./AppLink";
 
 const Header: FunctionalComponent = () => {
   return (
@@ -15,17 +17,21 @@ const Header: FunctionalComponent = () => {
         w="100%"
         zIndex={10}
       >
-        <Heading size="lg">
-          St
-          <Text as="code" fontSize="2xl">
-            0
-          </Text>
-          pwatch
-        </Heading>
+        <Heading size="lg">Kognitif</Heading>
         <nav>
-          <Link as={PreactLink} href="/simple">
-            Simple Mode
-          </Link>
+          <Menu>
+            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+              Modes
+            </MenuButton>
+            <MenuList>
+              <MenuItem as={Link} href="/simple">
+                Simple Stopwatch
+              </MenuItem>
+              <MenuItem as={Link} href="/perceptual-speed">
+                Perceptual Speed
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </nav>
       </Flex>
       <Box pb={50} />

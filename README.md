@@ -1,4 +1,4 @@
-# Stopwatch
+# Kognitif
 
 ![image](https://user-images.githubusercontent.com/34271483/136263783-25c266d0-31f4-41cb-9ee5-2dcf73b98c33.png)
 
