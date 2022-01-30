@@ -27,7 +27,7 @@ export const getRandomIntExcept = (
   max = 100,
 ): integer => {
   const num = Math.floor(Math.random() * max);
-  return except.includes(num) ? getRandomInt(max) : num;
+  return except.includes(num) ? getRandomIntExcept(except, max) : num;
 };
 
 export const getMedian = (arr: number[]) => {

@@ -48,11 +48,21 @@ export const numberSpeedSlice = createSlice({
       }
 
       /** Can be evolved to other modes */
-      const min = Math.min.apply(Math, state.currentQuestion);
+      let min = Math.min.apply(Math, state.currentQuestion); // min changes if diff is same
       const median = getMedian(state.currentQuestion); //needless to substract min&max
       const max = Math.max.apply(Math, state.currentQuestion);
 
-      if (Math.max(median - min, max - median) === median - min) {
+      const maxDiff = max - median;
+      let minDiff = median - min;
+
+      if (median - min === maxDiff) {
+        const minIndex = state.currentQuestion.findIndex((el) => el === min);
+        state.currentQuestion[minIndex] -= 1; //can be 0 (not -1), not a big problem
+        min = state.currentQuestion[minIndex];
+        minDiff = median - min;
+      }
+
+      if (Math.max(minDiff, maxDiff) === minDiff) {
         state.currentAnswer = min;
       } else {
         state.currentAnswer = max;

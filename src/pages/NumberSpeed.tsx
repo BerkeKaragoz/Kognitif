@@ -187,7 +187,7 @@ const NumberSpeed: FunctionalComponent<{}> = () => {
             alignItems="center"
             justifyContent="center"
           >
-            Find furthest from the median
+            Find the furthest from the median
           </Text>
           <Stat textAlign="end">
             <StatLabel>Time</StatLabel>
@@ -213,12 +213,13 @@ const NumberSpeed: FunctionalComponent<{}> = () => {
         </SimpleGrid>
       </Container>
       <Container pb={8}>
-        <Table variant="simple" size="md">
+        <Table variant="simple" size="sm">
           <TableCaption>Session Statistics</TableCaption>
           <Thead>
             <Tr>
               <Th>#</Th>
               <Th>✓</Th>
+              <Th isNumeric>Q</Th>
               <Th isNumeric>A</Th>
               <Th isNumeric>ms</Th>
             </Tr>
@@ -240,6 +241,9 @@ const NumberSpeed: FunctionalComponent<{}> = () => {
                       ) : (
                         <CircleIcon color="red.500" />
                       )}
+                    </Td>
+                    <Td isNumeric>
+                      <b>{JSON.stringify(a.question)}</b>
                     </Td>
                     <Td isNumeric>
                       <b>{a.givenAnswer}</b>

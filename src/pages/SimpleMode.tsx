@@ -239,7 +239,7 @@ const SimpleMode: FunctionalComponent = () => {
       </Container>
 
       <Container pb={8}>
-        <Table variant="simple" size="md">
+        <Table variant="simple" size="sm">
           <TableCaption>Session Statistics</TableCaption>
           <Thead>
             <Tr>

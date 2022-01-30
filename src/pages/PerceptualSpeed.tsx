@@ -206,7 +206,7 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
             display="flex"
             alignItems="center"
           >
-            Count Vertical Matches
+            Count vertical matches
           </Text>
           <Stat textAlign="end">
             <StatLabel>Time</StatLabel>
