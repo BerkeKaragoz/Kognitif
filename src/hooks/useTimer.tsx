@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 
 //let ind = 0; //for debugging
 
-type TimerHook = {
+export type TimerHook = {
   Timer: FunctionalComponent;
   resetTimer: (pause?: boolean) => number;
   setTimerIsActive: (state: boolean) => void;

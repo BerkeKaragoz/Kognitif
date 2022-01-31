@@ -13,11 +13,11 @@ import {
 } from "../lib/perceptualSpeed";
 import { RootState } from "./store";
 
-type PSAnswerEntity = AnswerEntity<PSAnswerData>;
+export type PSAnswerEntity = AnswerEntity<PSAnswerData>;
 
 const perceptualSpeedAdapter = createEntityAdapter<PSAnswerEntity>();
 
-interface PSState extends BaseQuestionState<PSQuestion, PSAnswerInput> {
+export interface PSState extends BaseQuestionState<PSQuestion, PSAnswerInput> {
   questionTime: number;
 }
 
@@ -30,6 +30,8 @@ export const perceptualSpeedSlice = createSlice({
     totalTime: 0,
     currentQuestion: null,
     currentAnswer: null,
+    isCorrectRatioIncreased: true,
+    isAvgTimeDecreased: true,
   }),
   reducers: {
     generateQuestion: (state) => {
@@ -69,6 +71,13 @@ export const perceptualSpeedSlice = createSlice({
       else state.totalWrongAnswers++;
 
       state.totalTime += entity.answerTime;
+
+      state.isAvgTimeDecreased =
+        state.totalTime /
+          (state.totalCorrectAnswers + state.totalWrongAnswers) >
+        entity.answerTime;
+
+      state.isCorrectRatioIncreased = entity.isCorrect;
 
       perceptualSpeedAdapter.addOne(state, entity);
     },

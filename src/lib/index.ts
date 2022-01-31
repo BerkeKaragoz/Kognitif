@@ -1,3 +1,6 @@
+import { StatArrowProps } from "@chakra-ui/stat";
+import { RootState } from "../redux/store";
+
 type integer = number; // to mark that its not a float
 
 export interface BaseQuestionState<Question, AnswerInput> {
@@ -6,7 +9,17 @@ export interface BaseQuestionState<Question, AnswerInput> {
   totalTime: number;
   currentQuestion: Question | null;
   currentAnswer: AnswerInput | null;
+  isCorrectRatioIncreased: boolean;
+  isAvgTimeDecreased: boolean;
 }
+
+export type BaseQuestionStates = {
+  [K in keyof RootState]: RootState[K] extends BaseQuestionState<any, any>
+    ? K
+    : never;
+};
+
+export type BaseQuestionStateNames = BaseQuestionStates[keyof RootState];
 
 export interface BaseAnswerData<Question, AnswerInput> {
   question: Question;
@@ -42,4 +55,4 @@ export const secondsToString = (number: number): string =>
 export const getPercentage = (first: number, second: number): number =>
   first + second !== 0 ? (first / (first + second)) * 100 : 0;
 
-export type ArrowStateType = "increase" | "decrease";
+export type ArrowStateType = StatArrowProps["type"];

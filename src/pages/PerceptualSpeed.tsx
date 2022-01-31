@@ -11,11 +11,6 @@ import {
   GridItem,
   Heading,
   SimpleGrid,
-  Stat,
-  StatArrow,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
   Table,
   TableCaption,
   Tbody,
@@ -29,9 +24,10 @@ import {
 import { FunctionalComponent, h } from "preact";
 import { useCallback, useContext, useEffect, useState } from "preact/hooks";
 import CircleIcon from "../components/CircleIcon";
+import InfoSection from "../components/InfoSection";
 import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
 import useTimer from "../hooks/useTimer";
-import { ArrowStateType, getPercentage, secondsToString } from "../lib";
+import { secondsToString } from "../lib";
 import { PSAnswerData, PSAnswerInput } from "../lib/perceptualSpeed";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
@@ -41,22 +37,13 @@ import {
 } from "../redux/perceptualSpeedSlice";
 
 const PerceptualSpeed: FunctionalComponent<{}> = () => {
-  const {
-    currentQuestion,
-    currentAnswer,
-    questionTime,
-    totalCorrectAnswers,
-    totalWrongAnswers,
-    totalTime,
-  } = useAppSelector((state) => state.perceptualSpeed);
+  const { currentQuestion, currentAnswer, questionTime } = useAppSelector(
+    (state) => state.perceptualSpeed,
+  );
   const keyboardCallbacks = useContext(KeyboardContext);
   const dispatch = useAppDispatch();
   const answerList = useAppSelector(perceptualSpeedSelectors.selectAll);
   const { Timer, resetTimer, getElapsedTime } = useTimer();
-  const [correctAnswerArrow, setCorrectAnswerArrow] =
-    useState<ArrowStateType>("increase");
-  const [averageTimeArrow, setAverageTimeArrow] =
-    useState<ArrowStateType>("increase");
   const [elapsedTime, setElapsedTime] = useState(0);
 
   useInterval(() => {
@@ -71,14 +58,6 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
       isCorrect: currentAnswer === answer,
       answerTime: resetTimer(),
     };
-
-    setCorrectAnswerArrow(data.isCorrect ? "increase" : "decrease");
-
-    setAverageTimeArrow(
-      totalTime / (totalCorrectAnswers + totalWrongAnswers) > data.answerTime
-        ? "increase"
-        : "decrease",
-    );
 
     dispatch(addAnswer(data));
     dispatch(generateQuestion());
@@ -174,63 +153,9 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
           ))}
         </SimpleGrid>
       </Container>
-      <Container mb={8}>
-        <SimpleGrid columns={3} spacing={10}>
-          <Stat>
-            <StatLabel>Correct</StatLabel>
-            <StatNumber as="code">
-              <Flex align="baseline">
-                <span id="correct-answers">{totalCorrectAnswers}</span>
-                <Text ml={1} fontSize="xs">
-                  /{" "}
-                  <span id="total-answers">
-                    {totalCorrectAnswers + totalWrongAnswers}
-                  </span>
-                </Text>
-              </Flex>
-            </StatNumber>
-            <StatHelpText>
-              <StatArrow type={correctAnswerArrow} me={0.5} />
-              <code>
-                {getPercentage(totalCorrectAnswers, totalWrongAnswers).toFixed(
-                  1,
-                )}
-                %
-              </code>
-            </StatHelpText>
-          </Stat>
-          <Text
-            textAlign="center"
-            fontSize="sm"
-            opacity={0.8}
-            display="flex"
-            alignItems="center"
-          >
-            Count vertical matches
-          </Text>
-          <Stat textAlign="end">
-            <StatLabel>Time</StatLabel>
-            <StatNumber as="code">
-              <Flex align="baseline" justify="end">
-                <Timer />
-                <Text ml={1} fontSize="xs">
-                  ms
-                </Text>
-              </Flex>
-            </StatNumber>
-            <StatHelpText>
-              <code>
-                ~
-                {(
-                  totalTime / (totalCorrectAnswers + totalWrongAnswers) || 0
-                ).toFixed(0)}
-                ms
-              </code>
-              <StatArrow type={averageTimeArrow} me={0} ms={0.5} />
-            </StatHelpText>
-          </Stat>
-        </SimpleGrid>
-      </Container>
+      <InfoSection stateName="perceptualSpeed" Timer={Timer}>
+        Count vertical matches
+      </InfoSection>
       <Container pb={8}>
         <Table variant="simple" size="md">
           <TableCaption>Session Statistics</TableCaption>

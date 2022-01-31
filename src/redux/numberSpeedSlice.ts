@@ -34,6 +34,8 @@ export const numberSpeedSlice = createSlice({
     totalTime: 0,
     currentQuestion: null,
     currentAnswer: null,
+    isCorrectRatioIncreased: true,
+    isAvgTimeDecreased: true,
   }),
   reducers: {
     generateQuestion: (state) => {
@@ -78,6 +80,13 @@ export const numberSpeedSlice = createSlice({
       else state.totalWrongAnswers++;
 
       state.totalTime += entity.answerTime;
+
+      state.isAvgTimeDecreased =
+        state.totalTime /
+          (state.totalCorrectAnswers + state.totalWrongAnswers) >
+        entity.answerTime;
+
+      state.isCorrectRatioIncreased = entity.isCorrect;
 
       numberSpeedAdapter.addOne(state, entity);
     },
