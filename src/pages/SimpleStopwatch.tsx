@@ -9,11 +9,6 @@ import {
   Heading,
   SimpleGrid,
   Spinner,
-  Stat,
-  StatArrow,
-  StatHelpText,
-  StatLabel,
-  StatNumber,
   Table,
   TableCaption,
   Tbody,
@@ -24,21 +19,23 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { FunctionalComponent, h } from "preact";
-import { useCallback, useContext, useEffect, useState } from "preact/hooks";
+import { useCallback, useContext, useEffect } from "preact/hooks";
 import { MouseEventHandler } from "react";
 import CircleIcon from "../components/CircleIcon";
+import InfoSection from "../components/InfoSection";
 import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
 import useTimer from "../hooks/useTimer";
+import { secondsToString } from "../lib";
+import { SSAnswerData, SSAnswerInput } from "../lib/simpleStopwatch";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   addAnswer,
   generateQuestion,
-  SimpleAnswer,
-  simpleAnswersSelectors,
-} from "../redux/simpleModeSlice";
-import { ArrowStateType, getPercentage, secondsToString } from "../lib";
+  simpleStopwatchAnswersSelectors,
+  SIMPLE_STOPWATCH_NAME,
+} from "../redux/simpleStopwatchSlice";
 
-let renderCount = 0;
+//let renderCount = 0; //for debugging
 
 const generateOption = (correctAnswer: number, seed: number): number =>
   (correctAnswer % 10) + seed * 10;
@@ -72,51 +69,33 @@ const OptionButton: FunctionalComponent<OptionButtonProps> = (props) => {
   );
 };
 
-const SimpleMode: FunctionalComponent = () => {
+const SimpleStopwatch: FunctionalComponent = () => {
   const dispatch = useAppDispatch();
-  const {
-    itemTime,
-    currentQuestion,
-    currentAnswer,
-    totalCorrectAnswers,
-    totalWrongAnswers,
-    totalTime,
-  } = useAppSelector((state) => state.simpleMode);
-  const answerList = useAppSelector(simpleAnswersSelectors.selectAll);
+  const { itemTime, currentQuestion, currentAnswer } = useAppSelector(
+    (state) => state.simpleStopwatch,
+  );
+  const answerList = useAppSelector(simpleStopwatchAnswersSelectors.selectAll);
   const keyboardCallbacks = useContext(KeyboardContext);
 
   const { Timer, resetTimer } = useTimer();
-  const [correctAnswerArrow, setCorrectAnswerArrow] =
-    useState<ArrowStateType>("increase");
-  const [averageTimeArrow, setAverageTimeArrow] =
-    useState<ArrowStateType>("increase");
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const answerHandler = (answerValue: number) => (): void => {
+  const answerHandler = (answerInput: SSAnswerInput) => (): void => {
     if (currentQuestion === null) return;
-    const answer: SimpleAnswer = {
+    const answer: SSAnswerData = {
       question: currentQuestion,
-      givenAnswer: answerValue,
-      isCorrect: answerValue === currentAnswer,
+      givenAnswer: answerInput,
+      isCorrect: answerInput === currentAnswer,
+      correctAnswer: currentAnswer!,
       answerTime: resetTimer(),
     };
 
-    setCorrectAnswerArrow(answer.isCorrect ? "increase" : "decrease");
-
-    setAverageTimeArrow(
-      totalTime / (totalCorrectAnswers + totalWrongAnswers) > answer.answerTime
-        ? "increase"
-        : "decrease",
-    );
-
     dispatch(addAnswer(answer));
-
     dispatch(generateQuestion());
   };
 
-  console.info(
-    `Render Time: ${new Date().toISOString()} | Render Count: ${renderCount++}`,
-  );
+  // console.info(
+  //   `Render Time: ${new Date().toISOString()} | Render Count: ${renderCount++}`,
+  // );
 
   const keyboardHandler = useCallback(
     (e: KeyboardEvent): void => {
@@ -178,65 +157,10 @@ const SimpleMode: FunctionalComponent = () => {
           ))}
         </SimpleGrid>
       </Container>
-      <Container mb={8}>
-        <SimpleGrid columns={3} spacing={10}>
-          <Stat>
-            <StatLabel>Correct</StatLabel>
-            <StatNumber as="code">
-              <Flex align="baseline">
-                <span id="correct-answers">{totalCorrectAnswers}</span>
-                <Text ml={1} fontSize="xs">
-                  /{" "}
-                  <span id="total-answers">
-                    {totalCorrectAnswers + totalWrongAnswers}
-                  </span>
-                </Text>
-              </Flex>
-            </StatNumber>
-            <StatHelpText>
-              <StatArrow type={correctAnswerArrow} me={0.5} />
-              <code>
-                {getPercentage(totalCorrectAnswers, totalWrongAnswers).toFixed(
-                  1,
-                )}
-                %
-              </code>
-            </StatHelpText>
-          </Stat>
-          <Text
-            textAlign="center"
-            fontSize="sm"
-            opacity={0.8}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-          >
-            Add {secondsToString(itemTime)}s to ":
-            {secondsToString(currentQuestion)}"
-          </Text>
-          <Stat textAlign="end">
-            <StatLabel>Time</StatLabel>
-            <StatNumber as="code">
-              <Flex align="baseline" justify="end">
-                <Timer />
-                <Text ml={1} fontSize="xs">
-                  ms
-                </Text>
-              </Flex>
-            </StatNumber>
-            <StatHelpText>
-              <code>
-                ~
-                {(
-                  totalTime / (totalCorrectAnswers + totalWrongAnswers) || 0
-                ).toFixed(0)}
-                ms
-              </code>
-              <StatArrow type={averageTimeArrow} me={0} ms={0.5} />
-            </StatHelpText>
-          </Stat>
-        </SimpleGrid>
-      </Container>
+      <InfoSection stateName={SIMPLE_STOPWATCH_NAME} Timer={Timer}>
+        Add {secondsToString(itemTime)}s to ":
+        {secondsToString(currentQuestion)}"
+      </InfoSection>
 
       <Container pb={8}>
         <Table variant="simple" size="sm">
@@ -288,7 +212,7 @@ const SimpleMode: FunctionalComponent = () => {
   );
 };
 
-export default SimpleMode;
+export default SimpleStopwatch;
 
 /*
 type AnswerButtonProps = ComponentWithAs<

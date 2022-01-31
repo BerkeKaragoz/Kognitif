@@ -31,6 +31,7 @@ import {
   addAnswer,
   generateQuestion,
   numberSpeedSelectors,
+  NUMBER_SPEED_NAME,
 } from "../redux/numberSpeedSlice";
 
 const NumberSpeed: FunctionalComponent<{}> = () => {
@@ -130,7 +131,7 @@ const NumberSpeed: FunctionalComponent<{}> = () => {
             ))}
         </SimpleGrid>
       </Container>
-      <InfoSection stateName="numberSpeed" Timer={Timer}>
+      <InfoSection stateName={NUMBER_SPEED_NAME} Timer={Timer}>
         Find the furthest from the median
       </InfoSection>
       <Container pb={8}>

@@ -1,7 +1,7 @@
 import { FunctionalComponent, h } from "preact";
 import { Route, Router } from "preact-router";
 
-import SimpleMode from "./pages/SimpleMode";
+import SimpleStopwatch from "./pages/SimpleStopwatch";
 import NotFoundPage from "./pages/notfound";
 import Counter from "./pages/Counter";
 import Header from "./components/Header";
@@ -24,9 +24,9 @@ const Main: FunctionalComponent = () => {
           <ChakraProvider theme={theme}>
             <Header />
             <Router>
-              <Redirect path="/" to="/simple" />
-              <Route path="/simple" component={SimpleMode} />
+              <Redirect path="/" to="/simple-stopwatch" />
               <Route path="/counter" component={Counter} />
+              <Route path="/simple-stopwatch" component={SimpleStopwatch} />
               <Route path="/perceptual-speed" component={PerceptualSpeed} />
               <Route path="/number-speed" component={NumberSpeed} />
               <NotFoundPage default />

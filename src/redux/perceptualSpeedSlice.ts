@@ -94,4 +94,6 @@ export const perceptualSpeedSelectors =
 
 const perceptualSpeedReducer = perceptualSpeedSlice.reducer;
 
+export const PERCEPTUAL_SPEED_NAME = perceptualSpeedSlice.name;
+
 export default perceptualSpeedReducer;

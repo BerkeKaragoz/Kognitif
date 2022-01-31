@@ -101,4 +101,6 @@ export const numberSpeedSelectors = numberSpeedAdapter.getSelectors<RootState>(
 
 const numberSpeedReducer = numberSpeedSlice.reducer;
 
+export const NUMBER_SPEED_NAME = numberSpeedSlice.name;
+
 export default numberSpeedReducer;

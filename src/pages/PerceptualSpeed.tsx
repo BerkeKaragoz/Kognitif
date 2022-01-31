@@ -34,6 +34,7 @@ import {
   addAnswer,
   generateQuestion,
   perceptualSpeedSelectors,
+  PERCEPTUAL_SPEED_NAME,
 } from "../redux/perceptualSpeedSlice";
 
 const PerceptualSpeed: FunctionalComponent<{}> = () => {
@@ -153,7 +154,7 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
           ))}
         </SimpleGrid>
       </Container>
-      <InfoSection stateName="perceptualSpeed" Timer={Timer}>
+      <InfoSection stateName={PERCEPTUAL_SPEED_NAME} Timer={Timer}>
         Count vertical matches
       </InfoSection>
       <Container pb={8}>

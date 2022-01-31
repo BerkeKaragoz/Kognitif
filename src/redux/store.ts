@@ -3,7 +3,7 @@ import { createLogger } from "redux-logger";
 import counterReducer from "./counterSlice";
 import numberSpeedReducer from "./numberSpeedSlice";
 import perceptualSpeedReducer from "./perceptualSpeedSlice";
-import simpleModeReducer from "./simpleModeSlice";
+import simpleStopwatchReducer from "./simpleStopwatchSlice";
 
 const logger = createLogger({
   collapsed: true,
@@ -12,7 +12,7 @@ const logger = createLogger({
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
-    simpleMode: simpleModeReducer,
+    simpleStopwatch: simpleStopwatchReducer,
     perceptualSpeed: perceptualSpeedReducer,
     numberSpeed: numberSpeedReducer,
   },
