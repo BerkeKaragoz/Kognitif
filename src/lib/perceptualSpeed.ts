@@ -1,4 +1,4 @@
-import { BaseAnswerData } from ".";
+import { BaseAnswerData, BaseQuestionState } from "./redux";
 
 export type PSQuestion = {
   [key in UppercaseLetter]?: LowercaseLetter;
@@ -7,6 +7,10 @@ export type PSQuestion = {
 export type PSAnswerInput = number;
 
 export type PSAnswerData = BaseAnswerData<PSQuestion, PSAnswerInput>;
+
+export interface PSState extends BaseQuestionState<PSQuestion, PSAnswerInput> {
+  questionTime: number;
+}
 
 export type LowercaseLetter =
   | "a"
@@ -40,8 +44,8 @@ export type UppercaseLetter = Uppercase<LowercaseLetter>;
 
 export type Letter = UppercaseLetter | LowercaseLetter;
 
-const lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
-const uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+export const lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
+export const uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export const generateLetter = (except = "") => {
   const regex = new RegExp(`[${except}]`, "g");

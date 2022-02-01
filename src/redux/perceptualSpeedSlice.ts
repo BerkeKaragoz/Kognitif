@@ -1,25 +1,16 @@
-import {
-  createEntityAdapter,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
-import { AnswerEntity, BaseQuestionState, getRandomInt } from "../lib";
+import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { getRandomInt } from "../lib";
 import {
   generateLetter,
   LowercaseLetter,
   PSAnswerData,
-  PSAnswerInput,
-  PSQuestion,
+  PSState,
 } from "../lib/perceptualSpeed";
+import { addAnswerGenerator, AnswerEntity } from "../lib/redux";
 import { RootState } from "./store";
 
-export type PSAnswerEntity = AnswerEntity<PSAnswerData>;
-
-const perceptualSpeedAdapter = createEntityAdapter<PSAnswerEntity>();
-
-export interface PSState extends BaseQuestionState<PSQuestion, PSAnswerInput> {
-  questionTime: number;
-}
+const perceptualSpeedAdapter =
+  createEntityAdapter<AnswerEntity<PSAnswerData>>();
 
 export const perceptualSpeedSlice = createSlice({
   name: "perceptualSpeed",
@@ -61,39 +52,17 @@ export const perceptualSpeedSlice = createSlice({
         state.currentQuestion[upperLetter] = lowerLetter;
       }
     },
-    addAnswer: (state, action: PayloadAction<PSAnswerData>) => {
-      const entity: PSAnswerEntity = {
-        ...action.payload,
-        id: state.ids.length,
-      };
-
-      if (entity.isCorrect) state.totalCorrectAnswers++;
-      else state.totalWrongAnswers++;
-
-      state.totalTime += entity.answerTime;
-
-      state.isAvgTimeDecreased =
-        state.totalTime /
-          (state.totalCorrectAnswers + state.totalWrongAnswers) >
-        entity.answerTime;
-
-      state.isCorrectRatioIncreased = entity.isCorrect;
-
-      perceptualSpeedAdapter.addOne(state, entity);
-    },
+    addAnswer: addAnswerGenerator(perceptualSpeedAdapter),
   },
 });
-
-// Action creators are generated for each case reducer function
-export const { generateQuestion, addAnswer } = perceptualSpeedSlice.actions;
 
 export const perceptualSpeedSelectors =
   perceptualSpeedAdapter.getSelectors<RootState>(
     (state) => state.perceptualSpeed,
   );
 
-const perceptualSpeedReducer = perceptualSpeedSlice.reducer;
+export const { generateQuestion, addAnswer } = perceptualSpeedSlice.actions;
+
+export const perceptualSpeedReducer = perceptualSpeedSlice.reducer;
 
 export const PERCEPTUAL_SPEED_NAME = perceptualSpeedSlice.name;
-
-export default perceptualSpeedReducer;

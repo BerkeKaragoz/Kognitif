@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { createLogger } from "redux-logger";
 import counterReducer from "./counterSlice";
-import numberSpeedReducer from "./numberSpeedSlice";
-import perceptualSpeedReducer from "./perceptualSpeedSlice";
-import simpleStopwatchReducer from "./simpleStopwatchSlice";
+import { numberSpeedReducer } from "./numberSpeedSlice";
+import { perceptualSpeedReducer } from "./perceptualSpeedSlice";
+import { simpleStopwatchReducer } from "./simpleStopwatchSlice";
 
 const logger = createLogger({
   collapsed: true,

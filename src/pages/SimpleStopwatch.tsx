@@ -31,7 +31,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   addAnswer,
   generateQuestion,
-  simpleStopwatchAnswersSelectors,
+  simpleStopwatchSelectors,
   SIMPLE_STOPWATCH_NAME,
 } from "../redux/simpleStopwatchSlice";
 
@@ -74,7 +74,7 @@ const SimpleStopwatch: FunctionalComponent = () => {
   const { itemTime, currentQuestion, currentAnswer } = useAppSelector(
     (state) => state.simpleStopwatch,
   );
-  const answerList = useAppSelector(simpleStopwatchAnswersSelectors.selectAll);
+  const answerList = useAppSelector(simpleStopwatchSelectors.selectAll);
   const keyboardCallbacks = useContext(KeyboardContext);
 
   const { Timer, resetTimer } = useTimer();

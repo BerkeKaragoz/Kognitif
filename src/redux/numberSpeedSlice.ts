@@ -1,27 +1,10 @@
-import {
-  createEntityAdapter,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
-import {
-  AnswerEntity,
-  BaseQuestionState,
-  getMedian,
-  getRandomIntExcept,
-} from "../lib";
-import { NSAnswerData, NSQuestion, NSAnswerInput } from "../lib/numberSpeed";
-
+import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { getMedian, getRandomIntExcept } from "../lib";
+import { NSAnswerData, NSState } from "../lib/numberSpeed";
+import { addAnswerGenerator, AnswerEntity } from "../lib/redux";
 import { RootState } from "./store";
 
-type NSAnswerEntity = AnswerEntity<NSAnswerData>;
-
-const numberSpeedAdapter = createEntityAdapter<NSAnswerEntity>();
-
-interface NSState extends BaseQuestionState<NSQuestion, NSAnswerInput> {
-  questionTime: number;
-  questionMax: number;
-  numberAmount: number;
-}
+const numberSpeedAdapter = createEntityAdapter<AnswerEntity<NSAnswerData>>();
 
 export const numberSpeedSlice = createSlice({
   name: "numberSpeed",
@@ -70,37 +53,16 @@ export const numberSpeedSlice = createSlice({
         state.currentAnswer = max;
       }
     },
-    addAnswer: (state, action: PayloadAction<NSAnswerData>) => {
-      const entity: NSAnswerEntity = {
-        ...action.payload,
-        id: state.ids.length,
-      };
-
-      if (entity.isCorrect) state.totalCorrectAnswers++;
-      else state.totalWrongAnswers++;
-
-      state.totalTime += entity.answerTime;
-
-      state.isAvgTimeDecreased =
-        state.totalTime /
-          (state.totalCorrectAnswers + state.totalWrongAnswers) >
-        entity.answerTime;
-
-      state.isCorrectRatioIncreased = entity.isCorrect;
-
-      numberSpeedAdapter.addOne(state, entity);
-    },
+    addAnswer: addAnswerGenerator(numberSpeedAdapter),
   },
 });
-
-export const { generateQuestion, addAnswer } = numberSpeedSlice.actions;
 
 export const numberSpeedSelectors = numberSpeedAdapter.getSelectors<RootState>(
   (state) => state.numberSpeed,
 );
 
-const numberSpeedReducer = numberSpeedSlice.reducer;
+export const { generateQuestion, addAnswer } = numberSpeedSlice.actions;
+
+export const numberSpeedReducer = numberSpeedSlice.reducer;
 
 export const NUMBER_SPEED_NAME = numberSpeedSlice.name;
-
-export default numberSpeedReducer;

@@ -23,7 +23,7 @@ const Header: FunctionalComponent = () => {
               Modes
             </MenuButton>
             <MenuList>
-              <MenuItem as={Link} href="/simple">
+              <MenuItem as={Link} href="/simple-stopwatch">
                 Simple Stopwatch
               </MenuItem>
               <MenuItem as={Link} href="/perceptual-speed">

@@ -8,11 +8,12 @@ import {
 } from "@chakra-ui/react";
 import { FunctionalComponent, h } from "preact";
 import { TimerHook } from "../hooks/useTimer";
-import { BaseQuestionStateNames, getPercentage } from "../lib";
+import { getPercentage } from "../lib";
+import { ABaseQuestionStateName } from "../lib/redux";
 import { useAppSelector } from "../redux/hooks";
 
 const InfoSection: FunctionalComponent<{
-  stateName: BaseQuestionStateNames;
+  stateName: ABaseQuestionStateName;
   Timer: TimerHook["Timer"];
 }> = (props) => {
   const { children, stateName, Timer } = props;
