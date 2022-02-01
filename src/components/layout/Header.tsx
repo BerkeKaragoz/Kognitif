@@ -2,7 +2,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Box, Flex, Heading, Link } from "@chakra-ui/layout";
 import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { Fragment, FunctionalComponent, h } from "preact";
-import { colors } from "../style/theme";
+import { colors } from "../../style/theme";
 
 const Header: FunctionalComponent = () => {
   return (

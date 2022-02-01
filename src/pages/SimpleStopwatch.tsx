@@ -1,4 +1,3 @@
-import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
   Button,
   Center,
@@ -9,20 +8,15 @@ import {
   Heading,
   SimpleGrid,
   Spinner,
-  Table,
-  TableCaption,
-  Tbody,
   Td,
   Text,
   Th,
-  Thead,
-  Tr,
 } from "@chakra-ui/react";
 import { FunctionalComponent, h } from "preact";
 import { useCallback, useContext, useEffect } from "preact/hooks";
 import { MouseEventHandler } from "react";
-import CircleIcon from "../components/CircleIcon";
-import InfoSection from "../components/InfoSection";
+import InfoSection from "../components/smart/InfoSection";
+import SessionStatistics from "../components/smart/SessionStatistics";
 import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
 import useTimer from "../hooks/useTimer";
 import { secondsToString } from "../lib";
@@ -74,7 +68,6 @@ const SimpleStopwatch: FunctionalComponent = () => {
   const { itemTime, currentQuestion, currentAnswer } = useAppSelector(
     (state) => state.simpleStopwatch,
   );
-  const answerList = useAppSelector(simpleStopwatchSelectors.selectAll);
   const keyboardCallbacks = useContext(KeyboardContext);
 
   const { Timer, resetTimer } = useTimer();
@@ -161,53 +154,16 @@ const SimpleStopwatch: FunctionalComponent = () => {
         Add {secondsToString(itemTime)}s to ":
         {secondsToString(currentQuestion)}"
       </InfoSection>
-
-      <Container pb={8}>
-        <Table variant="simple" size="sm">
-          <TableCaption>Session Statistics</TableCaption>
-          <Thead>
-            <Tr>
-              <Th>#</Th>
-              <Th>✓</Th>
-              <Th>Q</Th>
-              <Th isNumeric>A</Th>
-              <Th isNumeric>ms</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {
-              //TODO make as a component & virtualize & minimize
-              answerList
-                .slice()
-                .reverse()
-                .map((a) => (
-                  <Tr>
-                    <Td>
-                      <i>{a.id + 1}</i>
-                    </Td>
-                    <Td>
-                      {a.isCorrect ? (
-                        <CheckCircleIcon color="green.500" />
-                      ) : (
-                        <CircleIcon color="red.500" />
-                      )}
-                    </Td>
-                    <Td>
-                      {secondsToString(a.question)}
-                      <span style={{ opacity: 0.25 }}>?</span>
-                    </Td>
-                    <Td isNumeric>
-                      <b>{secondsToString(a.givenAnswer)}</b>
-                    </Td>
-                    <Td isNumeric>
-                      <code>{a.answerTime}</code>
-                    </Td>
-                  </Tr>
-                ))
-            }
-          </Tbody>
-        </Table>
-      </Container>
+      <SessionStatistics
+        selectors={simpleStopwatchSelectors}
+        AdditionalTh={<Th isNumeric>Q</Th>}
+        AdditionalTd={(answer) => (
+          <Td isNumeric>
+            {secondsToString(answer.question)}
+            <span style={{ opacity: 0.25 }}>?</span>
+          </Td>
+        )}
+      />
     </div>
   );
 };

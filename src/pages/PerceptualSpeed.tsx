@@ -1,4 +1,3 @@
-import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -11,20 +10,13 @@ import {
   GridItem,
   Heading,
   SimpleGrid,
-  Table,
-  TableCaption,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
   useInterval,
 } from "@chakra-ui/react";
 import { FunctionalComponent, h } from "preact";
 import { useCallback, useContext, useEffect, useState } from "preact/hooks";
-import CircleIcon from "../components/CircleIcon";
-import InfoSection from "../components/InfoSection";
+import InfoSection from "../components/smart/InfoSection";
+import SessionStatistics from "../components/smart/SessionStatistics";
 import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
 import useTimer from "../hooks/useTimer";
 import { secondsToString } from "../lib";
@@ -43,7 +35,6 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
   );
   const keyboardCallbacks = useContext(KeyboardContext);
   const dispatch = useAppDispatch();
-  const answerList = useAppSelector(perceptualSpeedSelectors.selectAll);
   const { Timer, resetTimer, getElapsedTime } = useTimer();
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -157,47 +148,7 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
       <InfoSection stateName={PERCEPTUAL_SPEED_NAME} Timer={Timer}>
         Count vertical matches
       </InfoSection>
-      <Container pb={8}>
-        <Table variant="simple" size="md">
-          <TableCaption>Session Statistics</TableCaption>
-          <Thead>
-            <Tr>
-              <Th>#</Th>
-              <Th>✓</Th>
-              <Th isNumeric>A</Th>
-              <Th isNumeric>ms</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {
-              //TODO make as a component & virtualize & minimize
-              answerList
-                .slice()
-                .reverse()
-                .map((a) => (
-                  <Tr>
-                    <Td>
-                      <i>{a.id + 1}</i>
-                    </Td>
-                    <Td>
-                      {a.isCorrect ? (
-                        <CheckCircleIcon color="green.500" />
-                      ) : (
-                        <CircleIcon color="red.500" />
-                      )}
-                    </Td>
-                    <Td isNumeric>
-                      <b>{a.givenAnswer}</b>
-                    </Td>
-                    <Td isNumeric>
-                      <code>{a.answerTime}</code>
-                    </Td>
-                  </Tr>
-                ))
-            }
-          </Tbody>
-        </Table>
-      </Container>
+      <SessionStatistics tableSize="md" selectors={perceptualSpeedSelectors} />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
   Button,
   Center,
@@ -8,20 +7,15 @@ import {
   Flex,
   Heading,
   SimpleGrid,
-  Table,
-  TableCaption,
-  Tbody,
   Td,
   Text,
   Th,
-  Thead,
-  Tr,
   useInterval,
 } from "@chakra-ui/react";
 import { FunctionalComponent, h } from "preact";
 import { useCallback, useContext, useEffect, useState } from "preact/hooks";
-import CircleIcon from "../components/CircleIcon";
-import InfoSection from "../components/InfoSection";
+import InfoSection from "../components/smart/InfoSection";
+import SessionStatistics from "../components/smart/SessionStatistics";
 import KeyboardContext, { registerKListener } from "../contexts/Keyboard";
 import useTimer from "../hooks/useTimer";
 import { secondsToString } from "../lib";
@@ -40,7 +34,6 @@ const NumberSpeed: FunctionalComponent<{}> = () => {
   );
   const keyboardCallbacks = useContext(KeyboardContext);
   const dispatch = useAppDispatch();
-  const answerList = useAppSelector(numberSpeedSelectors.selectAll);
   const { Timer, resetTimer, getElapsedTime } = useTimer();
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -63,9 +56,10 @@ const NumberSpeed: FunctionalComponent<{}> = () => {
 
   const keyboardHandler = useCallback(
     (e: KeyboardEvent) => {
-      if (["0", "1", "2"].includes(e.key)) {
+      if (!currentQuestion) return;
+      if (["1", "2", "3"].includes(e.key)) {
         //TODO Temp, do as to comply diff lenghts
-        if (currentAnswer) answerHandler(parseInt(e.key));
+        if (currentAnswer) answerHandler(currentQuestion[parseInt(e.key) - 1]);
       }
     },
     [answerHandler, currentAnswer],
@@ -134,51 +128,15 @@ const NumberSpeed: FunctionalComponent<{}> = () => {
       <InfoSection stateName={NUMBER_SPEED_NAME} Timer={Timer}>
         Find the furthest from the median
       </InfoSection>
-      <Container pb={8}>
-        <Table variant="simple" size="sm">
-          <TableCaption>Session Statistics</TableCaption>
-          <Thead>
-            <Tr>
-              <Th>#</Th>
-              <Th>✓</Th>
-              <Th isNumeric>Q</Th>
-              <Th isNumeric>A</Th>
-              <Th isNumeric>ms</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {
-              //TODO make as a component & virtualize & minimize
-              answerList
-                .slice()
-                .reverse()
-                .map((a) => (
-                  <Tr>
-                    <Td>
-                      <i>{a.id + 1}</i>
-                    </Td>
-                    <Td>
-                      {a.isCorrect ? (
-                        <CheckCircleIcon color="green.500" />
-                      ) : (
-                        <CircleIcon color="red.500" />
-                      )}
-                    </Td>
-                    <Td isNumeric>
-                      <b>{JSON.stringify(a.question)}</b>
-                    </Td>
-                    <Td isNumeric>
-                      <b>{a.givenAnswer}</b>
-                    </Td>
-                    <Td isNumeric>
-                      <code>{a.answerTime}</code>
-                    </Td>
-                  </Tr>
-                ))
-            }
-          </Tbody>
-        </Table>
-      </Container>
+      <SessionStatistics
+        selectors={numberSpeedSelectors}
+        AdditionalTh={<Th isNumeric>Q</Th>}
+        AdditionalTd={(answer) => (
+          <Td isNumeric>
+            <b>{JSON.stringify(answer.question)}</b>
+          </Td>
+        )}
+      />
     </div>
   );
 };

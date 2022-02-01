@@ -1,4 +1,9 @@
-import { EntityAdapter, EntityState, PayloadAction } from "@reduxjs/toolkit";
+import {
+  EntityAdapter,
+  EntitySelectors,
+  EntityState,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import { RootState } from "../redux/store";
 
 // TYPES
@@ -31,6 +36,11 @@ export type AnswerEntity<T extends BaseAnswerData = BaseAnswerData> = T & {
   id: number;
 };
 
+export type AnswerSelectors = EntitySelectors<
+  AnswerEntity<BaseAnswerData>,
+  any
+>;
+
 //
 
 export const addAnswerGenerator =
@@ -38,7 +48,7 @@ export const addAnswerGenerator =
   (
     state: BaseQuestionState & EntityState<any>,
     action: PayloadAction<BaseAnswerData>,
-  ): void => {
+  ) => {
     const entity: AnswerEntity = {
       ...action.payload,
       id: state.ids.length,

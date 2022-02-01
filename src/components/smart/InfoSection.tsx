@@ -7,10 +7,10 @@ import {
   StatNumber,
 } from "@chakra-ui/react";
 import { FunctionalComponent, h } from "preact";
-import { TimerHook } from "../hooks/useTimer";
-import { getPercentage } from "../lib";
-import { ABaseQuestionStateName } from "../lib/redux";
-import { useAppSelector } from "../redux/hooks";
+import { TimerHook } from "../../hooks/useTimer";
+import { getPercentage } from "../../lib";
+import { ABaseQuestionStateName } from "../../lib/redux";
+import { useAppSelector } from "../../redux/hooks";
 
 const InfoSection: FunctionalComponent<{
   stateName: ABaseQuestionStateName;

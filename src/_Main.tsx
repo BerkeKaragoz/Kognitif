@@ -4,14 +4,14 @@ import { Route, Router } from "preact-router";
 import SimpleStopwatch from "./pages/SimpleStopwatch";
 import NotFoundPage from "./pages/notfound";
 import Counter from "./pages/Counter";
-import Header from "./components/Header";
+import Header from "./components/layout/Header";
 import { ChakraProvider } from "@chakra-ui/react";
 
 import theme from "./style/theme";
 
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
-import Redirect from "./components/Redirect";
+import Redirect from "./components/atomic/Redirect";
 import { KeyboardProvider } from "./contexts/Keyboard";
 import PerceptualSpeed from "./pages/PerceptualSpeed";
 import NumberSpeed from "./pages/NumberSpeed";
