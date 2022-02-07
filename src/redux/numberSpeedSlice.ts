@@ -47,7 +47,7 @@ export const numberSpeedSlice = createSlice({
         minDiff = median - min;
       }
 
-      if (Math.max(minDiff, maxDiff) === minDiff) {
+      if (minDiff > maxDiff) {
         state.currentAnswer = min;
       } else {
         state.currentAnswer = max;

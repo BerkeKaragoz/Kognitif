@@ -40,15 +40,16 @@ type OptionButtonProps = {
 };
 
 const OptionButton: FunctionalComponent<OptionButtonProps> = (props) => {
-  const { option, handler } = props;
+  const { option, handler, ...rest } = props;
 
   return (
     <Button
-      id={`answer-button-${secondsToString(option)[0]}`}
+      data-test-id={`answer-button-${secondsToString(option)[0]}`}
       colorScheme="purple"
       onClick={handler(option)}
       height="100%"
       width="100%"
+      {...rest}
     >
       <Flex align="baseline">
         <Text fontSize="2xl" opacity={0.4}>
@@ -131,10 +132,13 @@ const SimpleStopwatch: FunctionalComponent = () => {
         >
           <CircularProgressLabel>
             <Heading size="4xl">
-              :<span id="question">{secondsToString(currentQuestion)}</span>
+              :
+              <span data-test-id="question">
+                {secondsToString(currentQuestion)}
+              </span>
             </Heading>
             <Text fontSize="sm" style={{ opacity: 0.8 }}>
-              +<span id="item-time">{secondsToString(itemTime)}</span>
+              +<span data-test-id="item-time">{secondsToString(itemTime)}</span>
             </Text>
           </CircularProgressLabel>
         </CircularProgress>
@@ -143,7 +147,7 @@ const SimpleStopwatch: FunctionalComponent = () => {
         <SimpleGrid columns={3} spacing={5} minH="240px">
           {Array.from({ length: 6 }, (_, i) => (
             <OptionButton
-              key={`answerButton-${i}`}
+              key={`answer-button-${i}`}
               handler={answerHandler}
               option={generateOption(currentAnswer, i)}
             />

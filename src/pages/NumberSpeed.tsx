@@ -94,25 +94,30 @@ const NumberSpeed: FunctionalComponent<{}> = () => {
           <CircularProgressLabel>
             <Heading size="4xl">
               :
-              <span id="question">
+              <span data-test-id="remaining-time">
                 {secondsToString(
                   Math.max(0, Math.round(questionTime - elapsedTime / 1000)),
                 )}
               </span>
             </Heading>
             <Text fontSize="sm" style={{ opacity: 0.8 }}>
-              <span id="item-time">Target: {questionTime}s</span>
+              Target: <span data-test-id="target-time">{questionTime}</span>s
             </Text>
           </CircularProgressLabel>
         </CircularProgress>
       </Center>
       <Container mt={6} mb={8}>
-        <SimpleGrid columns={3} spacing={5} minH="168px">
+        <SimpleGrid
+          columns={3}
+          spacing={5}
+          minH="168px"
+          data-test-id="question-list"
+        >
           {currentQuestion !== null &&
-            currentQuestion.map((option) => (
+            currentQuestion.map((option, index) => (
               <Button
-                key={`answerButton-${option}`}
-                id={`answer-button-${option}`}
+                key={`answer-button-${option}`}
+                data-test-id={`answer-button-${index}`}
                 colorScheme="purple"
                 height="100%"
                 width="100%"

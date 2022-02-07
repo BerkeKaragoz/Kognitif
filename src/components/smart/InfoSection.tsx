@@ -33,10 +33,10 @@ const InfoSection: FunctionalComponent<{
           <StatLabel>Correct</StatLabel>
           <StatNumber as="code">
             <Flex align="baseline">
-              <span id="correct-answers">{totalCorrectAnswers}</span>
+              <span data-test-id="correct-answers">{totalCorrectAnswers}</span>
               <Text ml={1} fontSize="xs">
                 /{" "}
-                <span id="total-answers">
+                <span data-test-id="total-answers">
                   {totalCorrectAnswers + totalWrongAnswers}
                 </span>
               </Text>

@@ -94,14 +94,14 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
           <CircularProgressLabel>
             <Heading size="4xl">
               :
-              <span id="question">
+              <span data-test-id="remaining-time">
                 {secondsToString(
                   Math.max(0, Math.round(questionTime - elapsedTime / 1000)),
                 )}
               </span>
             </Heading>
             <Text fontSize="sm" opacity={0.8}>
-              <span id="item-time">Target: {questionTime}s</span>
+              Target: <span data-test-id="target-time">{questionTime}</span>s
             </Text>
           </CircularProgressLabel>
         </CircularProgress>
@@ -115,24 +115,34 @@ const PerceptualSpeed: FunctionalComponent<{}> = () => {
           borderColor="gray.600"
           textAlign="center"
           mb={4}
+          data-test-id="question-list"
         >
           {currentQuestion !== null &&
-            Object.entries(currentQuestion).map((v) => (
-              <GridItem>
+            Object.entries(currentQuestion).map((v, i) => (
+              <GridItem key={`question-${v[0]}-${i}`}>
                 <Box p={4} border="1px" borderColor="gray.700">
-                  <Text fontSize="4xl">{v[0]}</Text>
+                  <Text fontSize="4xl" data-test-id={`q-top-${i}`}>
+                    {v[0]}
+                  </Text>
                 </Box>
                 <Box p={4} border="1px" borderColor="gray.700">
-                  <Text fontSize="4xl">{v[1]}</Text>
+                  <Text fontSize="4xl" data-test-id={`q-bottom-${i}`}>
+                    {v[1]}
+                  </Text>
                 </Box>
               </GridItem>
             ))}
         </Grid>
-        <SimpleGrid columns={5} spacing={5} minH="100px">
+        <SimpleGrid
+          columns={5}
+          spacing={5}
+          minH="100px"
+          data-test-id="answer-button-list"
+        >
           {Array.from({ length: 5 }, (_, i) => (
             <Button
-              key={`answerButton-${i}`}
-              id={`answer-button-${i}`}
+              key={`answer-button-${i}`}
+              data-test-id={`answer-button-${i}`}
               colorScheme="purple"
               height="100%"
               width="100%"
