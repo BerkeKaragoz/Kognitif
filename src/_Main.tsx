@@ -11,26 +11,37 @@ import theme from "./style/theme";
 
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
-import Redirect from "./components/atomic/Redirect";
 import { KeyboardProvider } from "./contexts/Keyboard";
 import PerceptualSpeed from "./pages/PerceptualSpeed";
 import NumberSpeed from "./pages/NumberSpeed";
+import Homepage from "./pages/Homepage";
+import Footer from "./components/layout/Footer";
 
 const Main: FunctionalComponent = () => {
   return (
     <Provider store={store}>
       <KeyboardProvider>
-        <div id="preact_root">
+        <div
+          id="preact_root"
+          style={{ display: "flex", flexDirection: "column", height: "100%" }}
+        >
           <ChakraProvider theme={theme}>
             <Header />
-            <Router>
-              <Redirect path="/" to="/simple-stopwatch" />
-              <Route path="/counter" component={Counter} />
-              <Route path="/simple-stopwatch" component={SimpleStopwatch} />
-              <Route path="/perceptual-speed" component={PerceptualSpeed} />
-              <Route path="/number-speed" component={NumberSpeed} />
-              <NotFoundPage default />
-            </Router>
+            <main
+              style={{
+                flexGrow: 1,
+              }}
+            >
+              <Router>
+                <Route path="/" component={Homepage} />
+                <Route path="/counter" component={Counter} />
+                <Route path="/simple-stopwatch" component={SimpleStopwatch} />
+                <Route path="/perceptual-speed" component={PerceptualSpeed} />
+                <Route path="/number-speed" component={NumberSpeed} />
+                <NotFoundPage default />
+              </Router>
+            </main>
+            <Footer />
           </ChakraProvider>
         </div>
       </KeyboardProvider>

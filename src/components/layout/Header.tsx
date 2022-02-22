@@ -16,7 +16,9 @@ const Header: FunctionalComponent = () => {
         w="100%"
         zIndex={10}
       >
-        <Heading size="lg">Kognitif</Heading>
+        <Heading as={Link} rounded="md" m={-1} p={1} href="/" size="lg">
+          Kognitif
+        </Heading>
         <nav>
           <Menu>
             <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
