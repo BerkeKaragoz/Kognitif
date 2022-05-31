@@ -1,5 +1,9 @@
 # Kognitif
 
+Try it at: [kognitif.berkekaragoz.com](https://kognitif.berkekaragoz.com)!
+
+It has individual cognitive training modes for different purposes. Every mode explains itself with a short text.
+
 ![image](https://user-images.githubusercontent.com/34271483/151677836-3804c75f-beba-4c5c-86b9-055ee70e0550.png)
 
 ## CLI Commands
