@@ -6,6 +6,10 @@ It has individual cognitive training modes for different purposes. Every mode ex
 
 ![image](https://user-images.githubusercontent.com/34271483/151677836-3804c75f-beba-4c5c-86b9-055ee70e0550.png)
 
+You can install it on your computer or mobile:
+
+![image](https://user-images.githubusercontent.com/34271483/171207087-e46f085e-996d-40a2-8d56-47e87cfa0cc5.png)
+
 ## CLI Commands
 
 - `npm install`: Installs dependencies
